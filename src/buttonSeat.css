@@ -1,0 +1,11 @@
+.button {
+    -fx-min-width: 200;
+    -fx-max-height: 20;
+    -fx-background-color: #49d086;
+}
+.button:hover{
+    -fx-background-color: #4b6584;
+}
+.pane{
+    -fx-background-color: #a4b0be;
+}

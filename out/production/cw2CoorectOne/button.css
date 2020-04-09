@@ -1,0 +1,32 @@
+.button {
+    -fx-min-width: 200;
+    -fx-min-height: 50;
+    -fx-background-color: #8854d0;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 700;
+}
+.button:hover{
+    -fx-background-color: #4b6584;
+}
+
+#close{
+    -fx-min-width: 200;
+    -fx-background-color: rgba(239, 41, 89, 0.62);
+    -fx-text-fill: #ffff;
+    -fx-font-weight: 700;
+}
+
+#close:hover{
+    -fx-background-color: #ff2754;
+}
+
+#pane{
+    -fx-background-color: #a55eea !important;
+}
+
+#lable1{
+    -fx-font-size: 25px;
+    -fx-font-weight: 900;
+    -fx-font-family: "DejaVu Sans";
+    -fx-padding: 20px;
+}
