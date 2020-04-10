@@ -9,6 +9,7 @@ public class PassengerQueue {
     public void setMinStayInQueue(int minStayInQueue) {
         this.minStayInQueue = minStayInQueue;
     }
+
     public int getMinStayInQueue() {
         return minStayInQueue;
     }
@@ -25,15 +26,6 @@ public class PassengerQueue {
         return last;
     }
 
-    public int getFirst() {
-        return first;
-    }
-
-    public void setQueueArray(Passenger[] queueArray) {
-        this.queueArray = queueArray;
-    }
-
-
     public void setLast(int i) {
         this.last = last + i;
     }
@@ -48,7 +40,6 @@ public class PassengerQueue {
 
     public void add(Passenger next) {
         queueArray[last] = next;
-        last++;
     }
 
     public Passenger remove() {
@@ -64,7 +55,11 @@ public class PassengerQueue {
     }
 
     public void display() {
-
+        System.out.println("-----------------------------------------");
+        System.out.println("***       add passenger details       ***");
+        System.out.println("-----------------------------------------");
+        System.out.println("name = "+queueArray[last].getName());
+        System.out.println("seat = "+queueArray[last].getSeatNumber());
     }
 
     public Passenger[] getQueueArray() {

@@ -7,26 +7,33 @@ public class Passenger {
     public String getName() {
         return firstName + " " + surname;
     }
-    public void setName(String name,String surName){
+
+    public void setName(String name, String surName) {
         this.firstName = name;
         this.surname = surName;
     }
 
-    public int getSecondsInQueue(){
+    public int getSecondsInQueue() {
         return secondsInQueue;
     }
-     public void setSecondsInQueue(int sec){
+
+    public void setSecondsInQueue(int sec) {
         this.secondsInQueue = sec;
-     }
-     public void display(){
+    }
 
-     }
+    public void display() {
+        System.out.println("--------------------------------------");
+        System.out.println("***       passenger details        ***");
+        System.out.println("--------------------------------------");
+        System.out.println("name = "+getName());
+        System.out.println("seat = "+getSeatNumber());
+    }
 
-     public int getSeatNumber(){
+    public int getSeatNumber() {
         return seatNumber;
-     }
+    }
 
-     public void setSeatNumber(int seat){
+    public void setSeatNumber(int seat) {
         this.seatNumber = seat;
-     }
+    }
 }
