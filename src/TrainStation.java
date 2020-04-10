@@ -126,19 +126,15 @@ public class TrainStation extends Application {
     private void setTheQueue(int x, Passenger[] array, int y) {
         if (x != 0) {
             for (int i = 0; i < x; i++) {
-                if (x == y) {
-                    array[x] = null;
-                    break;
+                if (i == x - 1) {
+                    array[i] = null;
                 } else {
-                    if (i == y) {
-                        array[i] = null;
-                    } else {
-                        array[i] = array[i + 1];
-                    }
+                    array[i] = array[i + 1];
                 }
             }
         }
     }
+
 
     /**
      * generate a number  between 1 and 6
@@ -149,7 +145,6 @@ public class TrainStation extends Application {
     private int getRandInt() {
         Random random = new Random();
         return random.nextInt(6) + 1;
-
     }
 
 
@@ -197,21 +192,6 @@ public class TrainStation extends Application {
 
     }
 
-    //sort the queue according to seat number
-    private void sortTheQueue(Passenger[] array, int x) {
-        Passenger temp;
-        if (x >= 2) {
-            for (int i = 0; i < x; i++) {
-                for (int j = 1; j < x; j++) {
-                    if (array[i].getSeatNumber() > array[j].getSeatNumber()) {
-                        temp = array[i];
-                        array[i] = array[j];
-                        array[j] = temp;
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * this method use to view waiting room,queue, and train
@@ -418,104 +398,68 @@ public class TrainStation extends Application {
      */
     public void simulation() {
         boolean find = false;
-        ArrayList<Integer> time = new ArrayList<>();
-        ArrayList<Integer> time2 = new ArrayList<>();
-        ArrayList<String> names = new ArrayList<>();
-        ArrayList<String> names2 = new ArrayList<>();
-        ArrayList<Integer> seat = new ArrayList<>();
-        ArrayList<Integer> seat2 = new ArrayList<>();
+        trainQueue.setMaxLength(trainQueue.getLast());
+        trainQueue2.setMaxLength(trainQueue2.getLast());
         while (!trainQueue.isEmpty() || !trainQueue2.isEmpty()) {
             int timeDelay = getRandInt() + getRandInt() + getRandInt();
             int timeDelay2 = getRandInt() + getRandInt() + getRandInt();
             if (!trainQueue.isEmpty()) {
                 setTime(trainQueue.getQueueArray(), trainQueue.getLast(), timeDelay);
-                bordToTrain(Train, trainQueue, trainQueue.getLast(), time, names, seat);
+                dataSetting(trainQueue, trainQueue.getLast());
                 trainQueue.setLast(-1);
             }
             if (!trainQueue2.isEmpty()) {
                 setTime(trainQueue2.getQueueArray(), trainQueue2.getLast(), timeDelay2);
-                bordToTrain(Train, trainQueue2, trainQueue2.getLast(), time2, names2, seat2);
+                dataSetting(trainQueue2, trainQueue2.getLast());
                 trainQueue2.setLast(-1);
             }
             find = true;
         }
         if (find) {
-            dataSetting(time, names, seat, time2, names2, seat2);
+            showReport();
+            for (int i = trainQueue.getMaxLength(); i > 0; i--) {
+                bordToTrain(Train, trainQueue, trainQueue.getMaxLength());
+            }
+            for (int i = trainQueue2.getMaxLength(); i > 0; i--) {
+                bordToTrain(Train, trainQueue2, trainQueue2.getMaxLength());
+            }
         } else {
             System.out.println("nothing to add train");
         }
     }
 
-    private void dataSetting(ArrayList<Integer> time, ArrayList<String> names, ArrayList<Integer> seat, ArrayList<Integer> time2, ArrayList<String> names2, ArrayList<Integer> seat2) {
-        int len = time.size();
-        int len2 = time2.size();
-        ArrayList<Integer> tempTime = time;
-        ArrayList<Integer> tempTime2 = time2;
-        int min = 0;
-        int max = 0;
-        double avg = 0;
-        int min2 = 0;
-        int max2 = 0;
-        double avg2 = 0;
-        if (len > 0) {
-            sort(tempTime);
-            min = tempTime.get(0);
-            max = tempTime.get(len - 1);
-            if (len == 1) {
-                avg = min;
-            } else {
-                avg = (max + min) / 2;
-            }
-        }
-        if (len2 > 0) {
-            sort(tempTime2);
-            min2 = tempTime.get(0);
-            max2 = tempTime.get(len - 1);
-            if (len == 1) {
-                avg2 = min2;
-            } else {
-                avg = (max2 + min2) / 2;
-            }
-        }
-        showReport(max, min, avg, max2, min2, avg2, time, names, seat, time2, names2, seat2, len, len2);
-
-    }
-
-    private void bordToTrain(Passenger[] train, PassengerQueue queue, int x, ArrayList<Integer> time, ArrayList<String> names, ArrayList<Integer> seat) {
-        train[queue.remove().getSeatNumber() - 1] = queue.remove();
-        int waitTime = queue.remove().getSecondsInQueue();
-        int seatNum = queue.remove().getSeatNumber();
-        String pName = queue.remove().getName();
-        time.add(waitTime);
-        names.add(pName);
-        seat.add(seatNum);
-        setTheQueue(x, queue.getQueueArray(), 21);
-    }
-
+    //set waiting time to Passengers in the queue
     private void setTime(Passenger[] passenger, int x, int time) {
         for (int i = 0; i < x; i++) {
             passenger[i].setSecondsInQueue(time);
         }
     }
 
-    //sort the time arrayList this help to get max and= min times
-    private void sort(ArrayList<Integer> time) {
-        int tempTime;
-
-        int lengthOfArrayList = time.size();
-        for (int i = 0; i < lengthOfArrayList; i++) {
-            for (int j = i + 1; j < lengthOfArrayList; j++) {
-                if (time.get(i) > time.get(j)) {
-                    tempTime = time.get(i);
-                    time.set(i, time.get(j));
-                    time.set(j, tempTime);
+    private void dataSetting(PassengerQueue passenger, int last) {
+        int tempMax = 0;
+        int tempMin = 0;
+        for (int i = 0; i < last; i++) {
+            if (passenger.getQueueArray()[i] != null) {
+                if (passenger.getQueueArray()[i].getSecondsInQueue() > tempMax) {
+                    tempMax = passenger.getQueueArray()[i].getSecondsInQueue();
+                    passenger.setMaxStayInQueue(tempMax);
+                }
+                if (passenger.getQueueArray()[i].getSecondsInQueue() < tempMin) {
+                    tempMin = passenger.getQueueArray()[i].getSecondsInQueue();
+                    passenger.setMinStayInQueue(tempMin);
                 }
             }
         }
     }
 
+
+    private void bordToTrain(Passenger[] train, PassengerQueue queue, int x) {
+        train[queue.remove().getSeatNumber() - 1] = queue.remove();
+        setTheQueue(x, queue.getQueueArray(), 21);
+    }
+
     //show the report
-    private void showReport(int max, int min, double avg, int max2, int min2, double avg2, ArrayList<Integer> time, ArrayList<String> name, ArrayList<Integer> seat, ArrayList<Integer> time2, ArrayList<String> name2, ArrayList<Integer> seat2, int x, int y) {
+    private void showReport() {
         Stage stage = new Stage();
         stage.setTitle("SIMULATION REPORT");
         BorderPane borderPane = new BorderPane();
@@ -529,8 +473,8 @@ public class TrainStation extends Application {
         close.setLayoutX(275);
         close.setStyle("-fx-background-color: #eb4d4b");
         close.setOnAction(e -> {
-            saveReport(max, min, avg, time, name, seat, x, "QUEUE I");
-            saveReport(max2, min2, avg2, time2, name2, seat2, y, "QUEUE II");
+            saveReport(trainQueue, trainQueue.getMaxLength(), "QUEUE I");
+            saveReport(trainQueue2, trainQueue2.getMaxLength(), "QUEUE II");
             stage.close();
         });
         pane2.getChildren().add(close);
@@ -544,21 +488,21 @@ public class TrainStation extends Application {
         title1.setLayoutY(30);
         title1.setStyle("-fx-text-fill:#16d91d;-fx-font-size: 18px;-fx-font-weight: 800;-fx-padding: 20px;");
 
-        Label minimum = new Label("minimum time = " + String.valueOf(min));
+        Label minimum = new Label("minimum time = " + String.valueOf(trainQueue.getMinStayInQueue()));
         minimum.setLayoutX(30);
         minimum.setLayoutY(90);
         minimum.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
-        Label maximum = new Label("maximum time = " + String.valueOf(max));
+        Label maximum = new Label("maximum time = " + String.valueOf(trainQueue.getMaxStayInQueue()));
         maximum.setLayoutX(30);
         maximum.setLayoutY(110);
         maximum.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
-        Label average = new Label("average time = " + String.valueOf(avg));
+        Label average = new Label("average time = " + String.valueOf((trainQueue.getMinStayInQueue() + trainQueue.getMinStayInQueue()) / trainQueue.getMaxLength()));
         average.setLayoutX(30);
         average.setLayoutY(130);
         average.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
-        Label length = new Label("maximum length = " + String.valueOf(x));
+        Label length = new Label("maximum length = " + String.valueOf(trainQueue.getMaxLength()));
         length.setLayoutX(30);
         length.setLayoutY(150);
         length.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
@@ -567,22 +511,22 @@ public class TrainStation extends Application {
         title2.setLayoutX(30);
         title2.setLayoutY(170);
         title2.setStyle("-fx-text-fill:#16d91d;-fx-font-size: 18px;-fx-font-weight: 800;-fx-padding: 20px;");
-        Label minimum2 = new Label("minimum time = " + String.valueOf(min2));
+        Label minimum2 = new Label("minimum time = " + String.valueOf(trainQueue2.getMinStayInQueue()));
 
         minimum2.setLayoutX(30);
         minimum2.setLayoutY(220);
         minimum2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
-        Label maximum2 = new Label("maximum time = " + String.valueOf(max2));
+        Label maximum2 = new Label("maximum time = " + String.valueOf(trainQueue2.getMaxStayInQueue()));
         maximum2.setLayoutX(30);
         maximum2.setLayoutY(240);
         maximum2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
-        Label average2 = new Label("average time = " + String.valueOf(avg2));
+        Label average2 = new Label("average time = " + String.valueOf((trainQueue2.getMinStayInQueue() + trainQueue2.getMinStayInQueue()) / trainQueue.getMaxLength()));
         average2.setLayoutX(30);
         average2.setLayoutY(260);
         average2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
-        Label length2 = new Label("maximum length = " + String.valueOf(y));
+        Label length2 = new Label("maximum length = " + String.valueOf(trainQueue2.getMaxLength()));
         length2.setLayoutX(30);
         length2.setLayoutY(280);
         length2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
@@ -592,15 +536,19 @@ public class TrainStation extends Application {
         pane1.setContent(vBox);
         vBox.setPadding(new Insets(10, 0, 15, 60));
         pane.setPadding(new Insets(10, 0, 20, 60));
-        printQueues(vBox, "QUEUE ONE", x, time, name, seat);
-        printQueues(vBox, "QUEUE TWO", y, time2, name2, seat2);
+        if (trainQueue.getMaxLength() != 0) {
+            printQueues(vBox, "QUEUE ONE", trainQueue, trainQueue.getMaxLength());
+        }
+        if (trainQueue2.getMaxLength() != 0) {
+            printQueues(vBox, "QUEUE TWO", trainQueue2, trainQueue2.getMaxLength());
+        }
         stage.initStyle(StageStyle.UNDECORATED);
         Scene scene = new Scene(borderPane, 600, 700);
         stage.setScene(scene);
         stage.showAndWait();
     }
 
-    private void printQueues(VBox vBox, String label, int x, ArrayList<Integer> time, ArrayList<String> name, ArrayList<Integer> seat) {
+    private void printQueues(VBox vBox, String label, PassengerQueue queue, int x) {
         Label label1 = new Label(label);
         label1.setStyle("-fx-padding: 30px;-fx-font-weight: 800;-fx-text-fill: purple");
         Label menu = new Label("NO" + "\t" + "SEAT" + "\t" + "TIME" + "\t\t" + "NAME");
@@ -608,34 +556,36 @@ public class TrainStation extends Application {
         Separator separator = new Separator(Orientation.HORIZONTAL);
         vBox.getChildren().addAll(label1, menu, separator);
         for (int i = 0; i < x; i++) {
-            Label data = new Label(String.valueOf(i + 1) + "\t" + seat.get(i) + "\t\t" + String.valueOf(time.get(i)) + "\t\t" + name.get(i));
+            Label data = new Label(String.valueOf(i + 1) + "\t" + String.valueOf(queue.getQueueArray()[i].getSeatNumber()) + "\t\t" + String.valueOf(queue.getQueueArray()[i].getSecondsInQueue()) + "\t\t" + queue.getQueueArray()[i].getName());
             vBox.getChildren().add(data);
             data.setStyle("-fx-text-fill: #010813;-fx-padding: 5px;-fx-font-size: 13px");
         }
     }
 
-    private void saveReport(int max, int min, double avg, ArrayList<Integer> time, ArrayList<String> name, ArrayList<Integer> seat, int x, String l) {
+    private void saveReport(PassengerQueue queue, int x, String l) {
         try {
-
-            String content = "\nminimum time = " + min + "\n" +
-                    "maximum time = " + max + "\n" +
-                    "average time = " + avg + "\n" +
-                    "maximum length = " + x + "\n";
-            File file = new File("report.txt");
-            FileWriter fileWriter = new FileWriter(file, true);
-            BufferedWriter bw = new BufferedWriter(fileWriter);
-            LocalDate now = LocalDate.now();
-            bw.write(String.valueOf(now));
-            bw.write(l);
-            bw.write(content);
-            bw.write("---------------------------------------\n");
-            bw.write("***   PASSENGER NAMES & DETAILS   ***\n");
-            for (int i = 0; i < x; i++) {
-                String content2 = name.get(i) + " " + seat.get(i) + " " + time.get(i) + "\n";
-                bw.write(content2);
+            if (queue.getMaxLength() != 0) {
+                double avg = (queue.getMinStayInQueue() + queue.getMaxStayInQueue()) / queue.getMaxLength();
+                String content = "\nminimum time = " + queue.getMinStayInQueue() + "\n" +
+                        "maximum time = " + queue.getMinStayInQueue() + "\n" +
+                        "average time = " + avg + "\n" +
+                        "maximum length = " + x + "\n";
+                File file = new File("report.txt");
+                FileWriter fileWriter = new FileWriter(file, true);
+                BufferedWriter bw = new BufferedWriter(fileWriter);
+                LocalDate now = LocalDate.now();
+                bw.write(String.valueOf(now));
+                bw.write(l);
+                bw.write(content);
+                bw.write("---------------------------------------\n");
+                bw.write("***   PASSENGER NAMES & DETAILS   ***\n");
+                for (int i = 0; i < x; i++) {
+                    String content2 = queue.getQueueArray()[i].getName() + " " + queue.getQueueArray()[i].getSeatNumber() + " " + queue.getQueueArray()[i].getSecondsInQueue() + "\n";
+                    bw.write(content2);
+                }
+                bw.write("------------------------------------------\n===========================================================================================\n");
+                bw.close();
             }
-            bw.write("------------------------------------------\n===========================================================================================\n");
-            bw.close();
         } catch (IOException ioe) {
             System.out.println("Some thing went wrong");
             ioe.printStackTrace();

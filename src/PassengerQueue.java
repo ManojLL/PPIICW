@@ -2,8 +2,16 @@ public class PassengerQueue {
     private Passenger[] queueArray = new Passenger[21];
     private static int first = 0;
     private int last = 0;
-    private int maxStayInQueue;
-    private int maxLength;
+    private int maxStayInQueue = 0;
+    private int maxLength = 0;
+    private int minStayInQueue = 0;
+
+    public void setMinStayInQueue(int minStayInQueue) {
+        this.minStayInQueue = minStayInQueue;
+    }
+    public int getMinStayInQueue() {
+        return minStayInQueue;
+    }
 
     public int getMaxStayInQueue() {
         return maxStayInQueue;
@@ -25,9 +33,6 @@ public class PassengerQueue {
         this.queueArray = queueArray;
     }
 
-    public static void setFirst(int first) {
-        PassengerQueue.first = first;
-    }
 
     public void setLast(int i) {
         this.last = last + i;
@@ -62,7 +67,7 @@ public class PassengerQueue {
 
     }
 
-    public Passenger[] getQueueArray(){
+    public Passenger[] getQueueArray() {
         return queueArray;
     }
 }
