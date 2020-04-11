@@ -57,7 +57,7 @@ public class TrainStation extends Application {
          * use two collection
          */
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-        mongoLogger.setLevel(Level.SEVERE); // e.g. or Log.WARNING, etc.
+        mongoLogger.setLevel(Level.OFF); // e.g. or Log.WARNING, etc.
         com.mongodb.MongoClient mongo = new MongoClient("localhost", 27017);
 
         DB db = mongo.getDB("TrainStation");
@@ -67,13 +67,13 @@ public class TrainStation extends Application {
         DBCollection queue2 = db.getCollection("queue2");
         DBCollection wait = db.getCollection("waitingRoom");
         DBCollection train = db.getCollection("train");
-        DBCollection doc = db.getCollection("document");
 
 
         //load data
         MongoDatabase database = mongo.getDatabase("dumbaraManikeTrain");
         MongoCollection<Document> toBadulla = database.getCollection("badulla");
         MongoCollection<Document> toColombo = database.getCollection("Colombo");
+        MongoCollection<Document> doc = database.getCollection("doc");
         //select the station bas=dull or colombo
         //menu system
         selectDestination(toBadulla, toColombo);
@@ -95,7 +95,6 @@ public class TrainStation extends Application {
 
             switch (option) {
                 case "a":
-
                     addPassenger();
                     displayQueue();
                     break;
@@ -116,6 +115,7 @@ public class TrainStation extends Application {
                     break;
                 case "w":
                     adding();
+                    displayTheWaitingRoom();
                     break;
                 case "q":
                     break menu;
@@ -129,6 +129,42 @@ public class TrainStation extends Application {
 
     }
 
+    /**
+     *display the waiting room
+     */
+    private void displayTheWaitingRoom() {
+        Stage stage = new Stage();
+        BorderPane borderPane = new BorderPane();
+        Pane pane = new Pane();
+        pane.setMinWidth(200);
+        pane.setId("pane");
+        borderPane.setLeft(pane);
+        Pane pane1 = new Pane();
+        borderPane.setTop(pane1);
+        ScrollPane scrollPane = new ScrollPane();
+        borderPane.setCenter(scrollPane);
+        GridPane gridPane = new GridPane();
+        scrollPane.setContent(gridPane);
+        Label label = new Label("QUEUE I AND QUEUE II");
+        label.setId("lable1");
+        pane1.getChildren().add(label);
+        pane1.setStyle("-fx-background-color: #a4b0be");
+        Button button = new Button("waiting room");
+        Button button3 = new Button("close");
+        Label label1 = new Label("");
+        clear(pane1, gridPane);
+        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
+        button3.setLayoutY(450);
+        button3.setId("close");
+        button3.setOnAction(e -> {
+            stage.close();
+        });
+        pane.getChildren().addAll( button3,  button);
+        Scene scene = new Scene(borderPane, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("button.css").toExternalForm());
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
 
     //this method use to implement the queue
     private void setTheQueue(int x, Passenger[] array) {
@@ -154,7 +190,6 @@ public class TrainStation extends Application {
         Random random = new Random();
         return random.nextInt(6) + 1;
     }
-
 
     /***
      * htis is gui add a passenger to the train queue
@@ -227,6 +262,8 @@ public class TrainStation extends Application {
         Button button3 = new Button("close");
         Button button4 = new Button("train queue II");
         Label label1 = new Label("");
+        clear(pane1, gridPane);
+        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
         button.setLayoutY(20);
         button1.setLayoutY(80);
         button.setOnAction(e -> {
@@ -278,10 +315,12 @@ public class TrainStation extends Application {
         Button button3 = new Button("close");
         Button button4 = new Button("train queue II");
         button.setLayoutY(20);
-        Label label = new Label("VIEW WAITING ROOM , QUEUE AND TRAIN");
+        Label label = new Label("");
         label.setId("lable1");
-        pane1.getChildren().add(label);
-        label.setLayoutX(150);
+        clear(pane1, gridPane);
+        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
+//        pane1.getChildren().add(label);
+//        label.setLayoutX(150);
         button.setOnAction(e -> {
             clear(pane1, gridPane);
             setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
@@ -332,7 +371,7 @@ public class TrainStation extends Application {
                 vBox.getChildren().add(button);
 
             } else {
-                String lab = "\t" + i + 1 + "\t\t\t\t" + "empty";
+                String lab = "\t" + String.valueOf(i + 1) + "\t\t\t\t" + "empty";
                 Label button = new Label(lab);
                 button.setStyle("-fx-padding: 5px");
                 vBox.getChildren().add(button);
@@ -618,10 +657,11 @@ public class TrainStation extends Application {
         maximum2.setLayoutX(30);
         maximum2.setLayoutY(270);
         maximum2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
+        double avg2 = 0;
         if (maxLength2 != 0) {
-            avg = (maxTime2 + minTime2) / maxLength2;
+            avg2 = (maxTime2 + minTime2) / maxLength2;
         }
-        Label average2 = new Label("average time = " + String.valueOf(avg));
+        Label average2 = new Label("average time = " + String.valueOf(avg2));
         average2.setLayoutX(30);
         average2.setLayoutY(290);
         average2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
@@ -898,30 +938,25 @@ public class TrainStation extends Application {
     /**
      * save data to mongo collect
      *
-     * @param queue
-     * queue one save here
-     * @param queue2
-     * queue2 save here
-     * @param wait
-     * waitingRoom in this  wait collection
-     * @param doc
-     * booked details save in this doc collection
-     * @param train
-     * train details save in this trin collection
+     * @param queue  queue one save here
+     * @param queue2 queue2 save here
+     * @param wait   waitingRoom in this  wait collection
+     * @param doc    booked details save in this doc collection
+     * @param train  train details save in this trin collection
      */
-    private void saveDetails(DBCollection queue, DBCollection queue2, DBCollection wait, DBCollection doc, DBCollection train) {
+    private void saveDetails(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train) {
         System.out.println("\n=================================================================================");
         System.out.println("-----------------------------      SAVING DATA    -------------------------------");
         System.out.println("=================================================================================\n");
-        save(queue, 21, trainQueue.getQueueArray(), null, 1);
+        save(queue, 21, trainQueue.getQueueArray(), null, 1, null);
         System.out.println(">>> saved waiting room");
-        save(queue2, 21, trainQueue2.getQueueArray(), null, 1);
+        save(queue2, 21, trainQueue2.getQueueArray(), null, 1, null);
         System.out.println(">>> saved queue  one");
-        save(train, 42, Train, null, 1);
+        save(train, 42, Train, null, 1, null);
         System.out.println(">>> saved queue two");
-        save(wait, 42, waitingRoom, null, 1);
+        save(wait, 42, waitingRoom, null, 1, null);
         System.out.println(">>> saved train");
-        save(doc, 42, null, documents, 2);
+        save(null, 42, null, documents, 2, doc);
         System.out.println(">>> saved document");
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("                                    SAVING FINISHED                              ");
@@ -929,14 +964,25 @@ public class TrainStation extends Application {
     }
 
     //save data
-    private void save(DBCollection collection, int x, Passenger[] array, Document[] document, int y) {
+    private void save(DBCollection collection, int x, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
+            if (y == 2) {
+                doc.drop();
+                Document document1 = new Document();
+                for (int i = 0; i < 42; i++) {
+                    if (document[i] != null) {
+                        document1.append("data", document[i]);
+                        doc.insertOne(document1);
+                        document1.clear();
+                    }
+                }
+            }
             //clear the collection before add data
-            collection.drop();
-            String now = LocalDate.now().toString();
-            Gson gson = new Gson();
-            for (int i = 0; i < x; i++) {
-                if (y == 1) {
+            if (y == 1) {
+                collection.drop();
+                String now = LocalDate.now().toString();
+                Gson gson = new Gson();
+                for (int i = 0; i < x; i++) {
                     if (array[i] != null) {
                         //convert object to string using Gson
                         String json = gson.toJson(array[i]);
@@ -945,87 +991,76 @@ public class TrainStation extends Application {
                         //add data to collection
                         collection.insert(basicDBObject);
                     }
-                } else {
-                    if (document[i] != null) {
-
-                        //convert object to string using Gson
-                        String json = gson.toJson(array[i]);
-                        //add a id and date fore it
-                        BasicDBObject basicDBObject = new BasicDBObject("object", json).append("id", i).append("date", now);
-                        //add data to collection
-                        collection.insert(basicDBObject);
-                    }
                 }
+
             }
+
         } catch (Exception e) {
             System.out.println("some thing went wrong");
         }
+
     }
 
     /**
      * load data to data structures
-     * @param queue
-     * queue one details load from this queue collection
-     * @param queue2
-     * queue2 data load from this queue2 collection
-     * @param wait
-     * waitingRoom data load from this wait collection
-     * @param doc
-     * booked detail load from this doc collection
-     * @param train
-     * this is calling in load method
+     *
+     * @param queue  queue one details load from this queue collection
+     * @param queue2 queue2 data load from this queue2 collection
+     * @param wait   waitingRoom data load from this wait collection
+     * @param doc    booked detail load from this doc collection
+     * @param train  this is calling in load method
      */
-    private void loadData(DBCollection queue, DBCollection queue2, DBCollection wait, DBCollection doc, DBCollection train) {
+    private void loadData(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train) {
         System.out.println("\n=================================================================================");
         System.out.println("-----------------------------     LOADING DATA    -------------------------------");
         System.out.println("=================================================================================\n");
         System.out.println(">>> loaded waiting room");
-        load(queue, trainQueue.getQueueArray(), null, 1);
+        load(queue, trainQueue.getQueueArray(), null, 1, null);
         System.out.println(">>> loaded queue one");
-        load(queue2, trainQueue2.getQueueArray(), null, 1);
+        load(queue2, trainQueue2.getQueueArray(), null, 1, null);
         System.out.println(">>> loaded queue two");
-        load(wait, waitingRoom, null, 1);
+        load(wait, waitingRoom, null, 1, null);
         System.out.println(">>> loaded train");
-        load(train, Train, null, 1);
-        load(doc, null, documents, 2);
+        load(train, Train, null, 1, null);
+        System.out.println(">>> load booked details");
+        load(null, null, documents, 2, doc);
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("                                  LOADING FINISHED                            ");
         System.out.println("---------------------------------------------------------------------------------");
     }
 
-    private void load(DBCollection collection, Passenger[] array, Document[] document, int y) {
+    private void load(DBCollection collection, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
-            //remove loaded data to document (booked data)
-            for (int j = 0; j < 42; j++) {
-                document[j] = null;
+        //remove loaded data to document (booked data)
+//            for (int j = 0; j < 42; j++) {
+//                document[j] = null;
+//            }
+        if (y == 2) {
+            FindIterable<Document> details = doc.find();
+            for (Document record : details) {
+                Document document1 = (Document) record.get("data");
+                String seat = (String) document1.get("seat");
+                document[Integer.parseInt(seat) - 1] = document1;
             }
+        }
+        if (y == 1) {
             Gson gson = new Gson();
             String now = LocalDate.now().toString();
             DBCursor data = collection.find();
             for (DBObject obj : data) {
                 String date = (String) obj.get("date");
-                if (y == 1) {
-                    if (date.equals(now)) {
-                        //get the saved object from the collection as a string
-                        String seat = (String) obj.get("object");
-                        //convert it to Passenger object using gson
-                        Passenger object = gson.fromJson(seat, Passenger.class);
-                        //add it according it's index
-                        int index = (int) obj.get("id");
-                        array[index] = object;
-                    }
-                } else {
-                    if (date.equals(now)) {
-                        //get the saved object from the collection as a string
-                        String seat = (String) obj.get("object");
-                        //convert it to Passenger object using gson
-                        Document object = gson.fromJson(seat, Document.class);
-                        //add it according it's index
-                        int index = (int) obj.get("id");
-                        document[index] = object;
-                    }
+                if (date.equals(now)) {
+                    //get the saved object from the collection as a string
+                    String seat = (String) obj.get("object");
+                    //convert it to Passenger object using gson
+                    Passenger object = gson.fromJson(seat, Passenger.class);
+                    //add it according it's index
+                    int index = (int) obj.get("id");
+                    array[index] = object;
                 }
             }
+
+        }
         } catch (Exception e) {
             System.out.println("some thing went wrong");
         }
