@@ -50,7 +50,7 @@ public class TrainStation extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         //disable the warnings and information
         /*
          *create connection to mongoDB
@@ -95,6 +95,7 @@ public class TrainStation extends Application {
 
             switch (option) {
                 case "a":
+
                     addPassenger();
                     displayQueue();
                     break;
@@ -130,7 +131,7 @@ public class TrainStation extends Application {
 
 
     //this method use to implement the queue
-    private void setTheQueue(int x, Passenger[] array, int y) {
+    private void setTheQueue(int x, Passenger[] array) {
         if (x != 0) {
             for (int i = 0; i < x; i++) {
                 if (i == x - 1) {
@@ -197,7 +198,7 @@ public class TrainStation extends Application {
                     System.out.println("added to queue I");
                     trainQueue.setLast(1);
                 }
-                setTheQueue(waitRoomCount, waitingRoom, 42);
+                setTheQueue(waitRoomCount, waitingRoom);
                 waitRoomCount--;
             }
         }
@@ -302,9 +303,7 @@ public class TrainStation extends Application {
         });
         button3.setLayoutY(450);
         button3.setId("close");
-        button3.setOnAction(e -> {
-            stage.close();
-        });
+        button3.setOnAction(e -> stage.close());
         pane.getChildren().addAll(button, button1, button2, button3, button4);
         Scene scene = new Scene(borderPane, 800, 600);
         scene.getStylesheets().add(getClass().getResource("button.css").toExternalForm());
@@ -333,7 +332,7 @@ public class TrainStation extends Application {
                 vBox.getChildren().add(button);
 
             } else {
-                String lab = "\t" + String.valueOf(i + 1) + "\t\t\t\t" + "empty";
+                String lab = "\t" + i + 1 + "\t\t\t\t" + "empty";
                 Label button = new Label(lab);
                 button.setStyle("-fx-padding: 5px");
                 vBox.getChildren().add(button);
@@ -417,7 +416,6 @@ public class TrainStation extends Application {
             System.out.println("-------------------------------------------------------");
             System.out.println("searching .....");
             Passenger deletePassenger = null;
-            loop:
             for (int i = 0; i < x; i++) {
                 if (array[i] != null) {
                     if (array[i].getName().equalsIgnoreCase(name)) {
@@ -542,7 +540,7 @@ public class TrainStation extends Application {
 
     private void bordToTrain(Passenger[] train, PassengerQueue queue, int x) {
         train[queue.remove().getSeatNumber() - 1] = queue.remove();
-        setTheQueue(x, queue.getQueueArray(), 21);
+        setTheQueue(x, queue.getQueueArray());
     }
 
     //show the report
@@ -643,7 +641,7 @@ public class TrainStation extends Application {
         length7.setLayoutY(350);
         length7.setStyle("-fx-font-size:15px;-fx-text-fill: #c4115a ");
 
-        pane.getChildren().addAll(title, title1, title2, minimum, maximum, average, length, minimum2, maximum2, average2, length2, length3,length5,length6,length7);
+        pane.getChildren().addAll(title, title1, title2, minimum, maximum, average, length, minimum2, maximum2, average2, length2, length3, length5, length6, length7);
         HBox vBox = new HBox();
         pane1.setContent(vBox);
         vBox.setPadding(new Insets(10, 0, 15, 60));
@@ -671,7 +669,7 @@ public class TrainStation extends Application {
         Separator separator = new Separator(Orientation.HORIZONTAL);
         vBox.getChildren().addAll(label1, menu, separator);
         for (int i = 0; i < x; i++) {
-            Label data = new Label(String.valueOf(i + 1) + "\t" + String.valueOf(queue.getQueueArray()[i].getSeatNumber()) + "\t\t  " + String.valueOf(queue.getQueueArray()[i].getSecondsInQueue()) + "\t\t" + queue.getQueueArray()[i].getName());
+            Label data = new Label((i + 1) + "\t" + String.valueOf(queue.getQueueArray()[i].getSeatNumber()) + "\t\t  " + String.valueOf(queue.getQueueArray()[i].getSecondsInQueue()) + "\t\t" + queue.getQueueArray()[i].getName());
             vBox.getChildren().add(data);
             data.setStyle("-fx-text-fill: #010813;-fx-padding: 5px;-fx-font-size: 13px");
         }
@@ -727,7 +725,6 @@ public class TrainStation extends Application {
     private void addDataToWaitingRoom(MongoCollection<Document> doc) {
         FindIterable<Document> data = doc.find();
         LocalDate todayDate = LocalDate.now();
-        loop:
         for (Document record : data) {
             //get data from mongo collection
             LocalDate date = LocalDate.parse((String) record.get("date"));
@@ -799,7 +796,7 @@ public class TrainStation extends Application {
                     if (sNum.equalsIgnoreCase(seat)) {
                         String name = (String) documents[Integer.parseInt(sNum) - 1].get("name");
                         String sname = (String) documents[Integer.parseInt(sNum) - 1].get("sname");
-                        String id = (String) documents[Integer.parseInt(sNum) - 1].get("id");
+//                        String id = (String) documents[Integer.parseInt(sNum) - 1].get("id");
                         waitingRoom[waitRoomCount] = new Passenger();
                         waitingRoom[waitRoomCount].setName(name, sname);
                         waitingRoom[waitRoomCount].setSeatNumber(Integer.parseInt(seat));
@@ -902,10 +899,15 @@ public class TrainStation extends Application {
      * save data to mongo collect
      *
      * @param queue
+     * queue one save here
      * @param queue2
+     * queue2 save here
      * @param wait
+     * waitingRoom in this  wait collection
      * @param doc
+     * booked details save in this doc collection
      * @param train
+     * train details save in this trin collection
      */
     private void saveDetails(DBCollection queue, DBCollection queue2, DBCollection wait, DBCollection doc, DBCollection train) {
         System.out.println("\n=================================================================================");
@@ -919,7 +921,7 @@ public class TrainStation extends Application {
         System.out.println(">>> saved queue two");
         save(wait, 42, waitingRoom, null, 1);
         System.out.println(">>> saved train");
-        save(wait, 42, null, documents, 2);
+        save(doc, 42, null, documents, 2);
         System.out.println(">>> saved document");
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("                                    SAVING FINISHED                              ");
@@ -933,7 +935,6 @@ public class TrainStation extends Application {
             collection.drop();
             String now = LocalDate.now().toString();
             Gson gson = new Gson();
-            loo:
             for (int i = 0; i < x; i++) {
                 if (y == 1) {
                     if (array[i] != null) {
@@ -963,12 +964,16 @@ public class TrainStation extends Application {
 
     /**
      * load data to data structures
-     *
      * @param queue
+     * queue one details load from this queue collection
      * @param queue2
+     * queue2 data load from this queue2 collection
      * @param wait
+     * waitingRoom data load from this wait collection
      * @param doc
-     * @param train  this is calling in load method
+     * booked detail load from this doc collection
+     * @param train
+     * this is calling in load method
      */
     private void loadData(DBCollection queue, DBCollection queue2, DBCollection wait, DBCollection doc, DBCollection train) {
         System.out.println("\n=================================================================================");
