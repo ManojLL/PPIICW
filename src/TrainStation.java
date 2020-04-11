@@ -61,16 +61,13 @@ public class TrainStation extends Application {
         Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.OFF); // e.g. or Log.WARNING, etc.
         com.mongodb.MongoClient mongo = new MongoClient("localhost", 27017);
-
-        DB db = mongo.getDB("TrainStation");
-
+        MongoClient client = new MongoClient();
+        DB db = client.getDB("TrainStation");
         //save and load objects
         DBCollection queue = db.getCollection("queue1");
         DBCollection queue2 = db.getCollection("queue2");
         DBCollection wait = db.getCollection("waitingRoom");
         DBCollection train = db.getCollection("train");
-
-
         //load data
         MongoDatabase database = mongo.getDatabase("dumbaraManikeTrain");
         MongoCollection<Document> toBadulla = database.getCollection("badulla");
@@ -628,7 +625,7 @@ public class TrainStation extends Application {
         maximum.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
         double avg = 0;
         if (maxLength1 != 0) {
-            avg =(double) (maxTime1 + minTime1) / maxLength1;
+            avg = (double) (maxTime1 + minTime1) / maxLength1;
         }
         Label average = new Label("average time = " + String.valueOf(avg));
         average.setLayoutX(30);
