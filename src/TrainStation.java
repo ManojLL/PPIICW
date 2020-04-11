@@ -9,10 +9,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.bson.Document;
@@ -30,6 +27,12 @@ import java.util.logging.Logger;
 
 
 public class TrainStation extends Application {
+    private static int maxLength1 = 0;
+    private static int maxLength2 = 0;
+    private static int maxTime1 = 0;
+    private static int maxTime2 = 0;
+    private static int minTime1 = 3;
+    private static int minTime2 = 3;
 
     private static Passenger[] Train = new Passenger[42];
     private Passenger[] waitingRoom = new Passenger[42];
@@ -457,8 +460,14 @@ public class TrainStation extends Application {
      */
     private void simulation() {
         boolean find = false;
-        trainQueue.setMaxLength(trainQueue.getLast());
-        trainQueue2.setMaxLength(trainQueue2.getLast());
+        maxLength1 = trainQueue.getLast();
+        maxLength2 = trainQueue2.getLast();
+        if (trainQueue.getMaxLength() < maxLength1) {
+            trainQueue.setMaxLength(maxLength1);
+        }
+        if (trainQueue2.getMaxLength() < maxLength2) {
+            trainQueue2.setMaxLength(maxLength2);
+        }
         while (!trainQueue.isEmpty() || !trainQueue2.isEmpty()) {
             int timeDelay = getRandInt() + getRandInt() + getRandInt();
             int timeDelay2 = getRandInt() + getRandInt() + getRandInt();
@@ -476,11 +485,11 @@ public class TrainStation extends Application {
         }
         if (find) {
             showReport();
-            for (int i = trainQueue.getMaxLength(); i > 0; i--) {
-                bordToTrain(Train, trainQueue, trainQueue.getMaxLength());
+            for (int i = maxLength1; i > 0; i--) {
+                bordToTrain(Train, trainQueue, maxLength1);
             }
-            for (int i = trainQueue2.getMaxLength(); i > 0; i--) {
-                bordToTrain(Train, trainQueue2, trainQueue2.getMaxLength());
+            for (int i = maxLength2; i > 0; i--) {
+                bordToTrain(Train, trainQueue2, maxLength2);
             }
         } else {
             System.out.println("nothing to add train");
@@ -495,19 +504,38 @@ public class TrainStation extends Application {
     }
 
     private void dataSetting(PassengerQueue passenger, int last) {
-        int tempMax = 0;
-        int tempMin = 0;
+        int tempTimeMax;
+        int tempTimeMin;
+        if (passenger.equals(trainQueue)) {
+            tempTimeMax = maxTime1;
+            tempTimeMin = minTime1;
+        } else {
+            tempTimeMax = maxTime2;
+            tempTimeMin = minTime2;
+        }
         for (int i = 0; i < last; i++) {
             if (passenger.getQueueArray()[i] != null) {
-                if (passenger.getQueueArray()[i].getSecondsInQueue() > tempMax) {
-                    tempMax = passenger.getQueueArray()[i].getSecondsInQueue();
-                    passenger.setMaxStayInQueue(tempMax);
+                int time = passenger.getQueueArray()[i].getSecondsInQueue();
+                if (time > tempTimeMax) {
+                    tempTimeMax = time;
+                    if (passenger.getMaxStayInQueue() < time) {
+                        passenger.setMaxStayInQueue(tempTimeMax);
+                    }
                 }
-                if (passenger.getQueueArray()[i].getSecondsInQueue() < tempMin) {
-                    tempMin = passenger.getQueueArray()[i].getSecondsInQueue();
-                    passenger.setMinStayInQueue(tempMin);
+
+                if (passenger.getQueueArray()[i].getSecondsInQueue() < tempTimeMin) {
+                    tempTimeMin = passenger.getQueueArray()[i].getSecondsInQueue();
+                    if (passenger.getMinStayInQueue() > tempTimeMin)
+                        passenger.setMinStayInQueue(tempTimeMin);
                 }
             }
+        }
+        if (passenger.equals(trainQueue)) {
+            maxTime1 = tempTimeMax;
+            minTime1 = tempTimeMin;
+        } else {
+            maxTime2 = tempTimeMax;
+            minTime2 = tempTimeMin;
         }
     }
 
@@ -529,16 +557,16 @@ public class TrainStation extends Application {
         borderPane.setCenter(pane1);
         borderPane.setBottom(pane2);
         Button close = new Button("save & exit");
-        close.setLayoutX(275);
+        close.setLayoutX(350);
         close.setStyle("-fx-background-color: #eb4d4b");
         close.setOnAction(e -> {
-            saveReport(trainQueue, trainQueue.getMaxLength(), "QUEUE I");
-            saveReport(trainQueue2, trainQueue2.getMaxLength(), "QUEUE II");
+            saveReport(trainQueue, maxLength1, "QUEUE I");
+            saveReport(trainQueue2, maxLength2, "QUEUE II");
             stage.close();
         });
         pane2.getChildren().add(close);
         Label title = new Label("SIMULATION REPORT");
-        title.setLayoutX(175);
+        title.setLayoutX(255);
         title.setLayoutY(10);
         title.setStyle("-fx-text-fill:#4b7bec;-fx-font-size: 23px;-fx-font-weight: 700;-fx-font-family: 'Bitstream Vera Sans Mono'");
 
@@ -547,67 +575,95 @@ public class TrainStation extends Application {
         title1.setLayoutY(30);
         title1.setStyle("-fx-text-fill:#16d91d;-fx-font-size: 18px;-fx-font-weight: 800;-fx-padding: 20px;");
 
-        Label minimum = new Label("minimum time = " + String.valueOf(trainQueue.getMinStayInQueue()));
+        Label minimum = new Label("minimum time = " + String.valueOf(minTime1));
         minimum.setLayoutX(30);
         minimum.setLayoutY(90);
         minimum.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
-        Label maximum = new Label("maximum time = " + String.valueOf(trainQueue.getMaxStayInQueue()));
+        Label maximum = new Label("maximum time = " + String.valueOf(maxTime1));
         maximum.setLayoutX(30);
         maximum.setLayoutY(110);
         maximum.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
-
-        Label average = new Label("average time = " + String.valueOf((trainQueue.getMinStayInQueue() + trainQueue.getMinStayInQueue()) / trainQueue.getMaxLength()));
+        double avg = 0;
+        if (maxLength1 != 0) {
+            avg = (maxTime1 + minTime1) / maxLength1;
+        }
+        Label average = new Label("average time = " + String.valueOf(avg));
         average.setLayoutX(30);
         average.setLayoutY(130);
         average.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
-        Label length = new Label("maximum length = " + String.valueOf(trainQueue.getMaxLength()));
+        Label length = new Label("maximum length = " + String.valueOf(maxLength1));
         length.setLayoutX(30);
         length.setLayoutY(150);
         length.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
+        Label length2 = new Label("All time maximum length = " + String.valueOf(trainQueue.getMaxLength()));
+        length2.setLayoutX(30);
+        length2.setLayoutY(170);
+        length2.setStyle("-fx-font-size:15px;-fx-text-fill: #c4115a ");
+
+        Label length5 = new Label("All time maximum time = " + String.valueOf(trainQueue.getMaxStayInQueue()));
+        length5.setLayoutX(30);
+        length5.setLayoutY(190);
+        length5.setStyle("-fx-font-size:15px;-fx-text-fill: #c4115a ");
+
         Label title2 = new Label("queue II details");
         title2.setLayoutX(30);
-        title2.setLayoutY(170);
+        title2.setLayoutY(200);
         title2.setStyle("-fx-text-fill:#16d91d;-fx-font-size: 18px;-fx-font-weight: 800;-fx-padding: 20px;");
-        Label minimum2 = new Label("minimum time = " + String.valueOf(trainQueue2.getMinStayInQueue()));
+        Label minimum2 = new Label("minimum time = " + String.valueOf(minTime2));
 
         minimum2.setLayoutX(30);
-        minimum2.setLayoutY(220);
+        minimum2.setLayoutY(250);
         minimum2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
-        Label maximum2 = new Label("maximum time = " + String.valueOf(trainQueue2.getMaxStayInQueue()));
+        Label maximum2 = new Label("maximum time = " + String.valueOf(maxTime2));
         maximum2.setLayoutX(30);
-        maximum2.setLayoutY(240);
+        maximum2.setLayoutY(270);
         maximum2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
-
-        Label average2 = new Label("average time = " + String.valueOf((trainQueue2.getMinStayInQueue() + trainQueue2.getMinStayInQueue()) / trainQueue.getMaxLength()));
+        if (maxLength2 != 0) {
+            avg = (maxTime2 + minTime2) / maxLength2;
+        }
+        Label average2 = new Label("average time = " + String.valueOf(avg));
         average2.setLayoutX(30);
-        average2.setLayoutY(260);
+        average2.setLayoutY(290);
         average2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
-        Label length2 = new Label("maximum length = " + String.valueOf(trainQueue2.getMaxLength()));
-        length2.setLayoutX(30);
-        length2.setLayoutY(280);
-        length2.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
+        Label length3 = new Label("maximum length = " + String.valueOf(maxLength2));
+        length3.setLayoutX(30);
+        length3.setLayoutY(310);
+        length3.setStyle("-fx-font-size:15px;-fx-text-fill: #130f40 ");
 
-        pane.getChildren().addAll(title, title1, title2, minimum, maximum, average, length, minimum2, maximum2, average2, length2);
-        VBox vBox = new VBox();
+        Label length6 = new Label("All time maximum length = " + String.valueOf(trainQueue2.getMaxLength()));
+        length6.setLayoutX(30);
+        length6.setLayoutY(330);
+        length6.setStyle("-fx-font-size:15px;-fx-text-fill: #c4115a");
+
+        Label length7 = new Label("All time maximum time = " + String.valueOf(trainQueue2.getMaxStayInQueue()));
+        length7.setLayoutX(30);
+        length7.setLayoutY(350);
+        length7.setStyle("-fx-font-size:15px;-fx-text-fill: #c4115a ");
+
+        pane.getChildren().addAll(title, title1, title2, minimum, maximum, average, length, minimum2, maximum2, average2, length2, length3,length5,length6,length7);
+        HBox vBox = new HBox();
         pane1.setContent(vBox);
         vBox.setPadding(new Insets(10, 0, 15, 60));
         pane.setPadding(new Insets(10, 0, 20, 60));
         if (trainQueue.getMaxLength() != 0) {
-            printQueues(vBox, "QUEUE ONE", trainQueue, trainQueue.getMaxLength());
+            printQueues(vBox, "QUEUE ONE", trainQueue, maxLength1);
         }
         if (trainQueue2.getMaxLength() != 0) {
-            printQueues(vBox, "QUEUE TWO", trainQueue2, trainQueue2.getMaxLength());
+            printQueues(vBox, "QUEUE TWO", trainQueue2, maxLength2);
         }
         stage.initStyle(StageStyle.UNDECORATED);
-        Scene scene = new Scene(borderPane, 600, 700);
+        Scene scene = new Scene(borderPane, 800, 700);
         stage.setScene(scene);
         stage.showAndWait();
     }
 
-    private void printQueues(VBox vBox, String label, PassengerQueue queue, int x) {
+    private void printQueues(HBox v, String label, PassengerQueue queue, int x) {
+        VBox vBox = new VBox();
+        v.getChildren().add(vBox);
+        vBox.setPadding(new Insets(10, 0, 15, 60));
         Label label1 = new Label(label);
         label1.setStyle("-fx-padding: 30px;-fx-font-weight: 800;-fx-text-fill: purple");
         Label menu = new Label("NO" + "\t" + "SEAT" + "\t" + "TIME" + "\t\t" + "NAME");
@@ -615,7 +671,7 @@ public class TrainStation extends Application {
         Separator separator = new Separator(Orientation.HORIZONTAL);
         vBox.getChildren().addAll(label1, menu, separator);
         for (int i = 0; i < x; i++) {
-            Label data = new Label(String.valueOf(i + 1) + "\t" + String.valueOf(queue.getQueueArray()[i].getSeatNumber()) + "\t\t" + String.valueOf(queue.getQueueArray()[i].getSecondsInQueue()) + "\t\t" + queue.getQueueArray()[i].getName());
+            Label data = new Label(String.valueOf(i + 1) + "\t" + String.valueOf(queue.getQueueArray()[i].getSeatNumber()) + "\t\t  " + String.valueOf(queue.getQueueArray()[i].getSecondsInQueue()) + "\t\t" + queue.getQueueArray()[i].getName());
             vBox.getChildren().add(data);
             data.setStyle("-fx-text-fill: #010813;-fx-padding: 5px;-fx-font-size: 13px");
         }
@@ -623,10 +679,19 @@ public class TrainStation extends Application {
 
     private void saveReport(PassengerQueue queue, int x, String l) {
         try {
-            if (queue.getMaxLength() != 0) {
-                double avg = (queue.getMinStayInQueue() + queue.getMaxStayInQueue()) / queue.getMaxLength();
-                String content = "\nminimum time = " + queue.getMinStayInQueue() + "\n" +
-                        "maximum time = " + queue.getMinStayInQueue() + "\n" +
+            int timeMin;
+            int timeMax;
+            if (queue.equals(trainQueue)) {
+                timeMax = maxTime1;
+                timeMin = minTime1;
+            } else {
+                timeMax = maxTime2;
+                timeMin = minTime2;
+            }
+            if (x != 0) {
+                double avg = (timeMin + timeMax) / x;
+                String content = "\nminimum time = " + timeMin + "\n" +
+                        "maximum time = " + timeMax + "\n" +
                         "average time = " + avg + "\n" +
                         "maximum length = " + x + "\n";
                 File file = new File("report.txt");
@@ -667,7 +732,7 @@ public class TrainStation extends Application {
             //get data from mongo collection
             LocalDate date = LocalDate.parse((String) record.get("date"));
             //set and add data for waitingRoom specific date(current date)
-            if (Period.between(todayDate, date).getDays() == 1) {
+            if (Period.between(todayDate, date).getDays() == 0) {
                 int seat = Integer.parseInt((String) record.get("seat"));
                 documents[seat - 1] = record;
                 bookedCount++;
@@ -898,12 +963,12 @@ public class TrainStation extends Application {
 
     /**
      * load data to data structures
+     *
      * @param queue
      * @param queue2
      * @param wait
      * @param doc
-     * @param train
-     * this is calling in load method
+     * @param train  this is calling in load method
      */
     private void loadData(DBCollection queue, DBCollection queue2, DBCollection wait, DBCollection doc, DBCollection train) {
         System.out.println("\n=================================================================================");
