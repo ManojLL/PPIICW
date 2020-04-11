@@ -29,3 +29,36 @@ maximum length = 1
 a a 8 9
 ------------------------------------------
 ===========================================================================================
+2020-04-11QUEUE I
+minimum time = 3
+maximum time = 18
+average time = 2.0
+maximum length = 8
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+ii xaX 1 12
+sdfghj cvbnm 5 11
+q w 12 12
+wdqw sssddsd 14 9
+sdfgh dfghj 23 18
+ddtsb dwefwrbwr 8 10
+asdfghj hsdfghjklnb 15 14
+zxfgb jhgvb 34 10
+------------------------------------------
+===========================================================================================
+2020-04-11QUEUE II
+minimum time = 3
+maximum time = 15
+average time = 2.0
+maximum length = 7
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+dcvb bvcvbn 3 9
+dfghjhv rfghjn 42 9
+ZXCVBN cvbn 11 15
+wertyuiop mnbvc 4 13
+a b 2 13
+sanutr raqjshsdf 9 8
+sdfghj dfghj 18 12
+------------------------------------------
+===========================================================================================

@@ -25,7 +25,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class TrainStation extends Application {
     private static int maxLength1 = 0;
     private static int maxLength2 = 0;
@@ -33,6 +32,7 @@ public class TrainStation extends Application {
     private static int maxTime2 = 0;
     private static int minTime1 = 3;
     private static int minTime2 = 3;
+
 
     private static Passenger[] Train = new Passenger[42];
     private Passenger[] waitingRoom = new Passenger[42];
@@ -151,14 +151,11 @@ public class TrainStation extends Application {
         pane1.setStyle("-fx-background-color: #a4b0be");
         Button button = new Button("waiting room");
         Button button3 = new Button("close");
-        Label label1 = new Label("");
         clear(pane1, gridPane);
         setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
         button3.setLayoutY(450);
         button3.setId("close");
-        button3.setOnAction(e -> {
-            stage.close();
-        });
+        button3.setOnAction(e -> stage.close());
         pane.getChildren().addAll( button3,  button);
         Scene scene = new Scene(borderPane, 800, 600);
         scene.getStylesheets().add(getClass().getResource("button.css").toExternalForm());
@@ -261,7 +258,6 @@ public class TrainStation extends Application {
         Button button1 = new Button("train queue I");
         Button button3 = new Button("close");
         Button button4 = new Button("train queue II");
-        Label label1 = new Label("");
         clear(pane1, gridPane);
         setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
         button.setLayoutY(20);
@@ -281,9 +277,7 @@ public class TrainStation extends Application {
         });
         button3.setLayoutY(450);
         button3.setId("close");
-        button3.setOnAction(e -> {
-            stage.close();
-        });
+        button3.setOnAction(e -> stage.close());
         pane.getChildren().addAll(button1, button3, button4, button);
         Scene scene = new Scene(borderPane, 800, 600);
         scene.getStylesheets().add(getClass().getResource("button.css").toExternalForm());
@@ -319,8 +313,6 @@ public class TrainStation extends Application {
         label.setId("lable1");
         clear(pane1, gridPane);
         setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
-//        pane1.getChildren().add(label);
-//        label.setLayoutX(150);
         button.setOnAction(e -> {
             clear(pane1, gridPane);
             setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
@@ -769,7 +761,7 @@ public class TrainStation extends Application {
             //get data from mongo collection
             LocalDate date = LocalDate.parse((String) record.get("date"));
             //set and add data for waitingRoom specific date(current date)
-            if (Period.between(todayDate, date).getDays() == 0) {
+            if (Period.between(todayDate, date).getDays() == 1) {
                 int seat = Integer.parseInt((String) record.get("seat"));
                 documents[seat - 1] = record;
                 bookedCount++;
@@ -967,6 +959,7 @@ public class TrainStation extends Application {
     private void save(DBCollection collection, int x, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
             if (y == 2) {
+                //clear previous data
                 doc.drop();
                 Document document1 = new Document();
                 for (int i = 0; i < 42; i++) {
@@ -977,8 +970,9 @@ public class TrainStation extends Application {
                     }
                 }
             }
-            //clear the collection before add data
+
             if (y == 1) {
+                //clear the collection before add data
                 collection.drop();
                 String now = LocalDate.now().toString();
                 Gson gson = new Gson();
@@ -992,18 +986,14 @@ public class TrainStation extends Application {
                         collection.insert(basicDBObject);
                     }
                 }
-
             }
-
         } catch (Exception e) {
             System.out.println("some thing went wrong");
         }
-
     }
 
     /**
      * load data to data structures
-     *
      * @param queue  queue one details load from this queue collection
      * @param queue2 queue2 data load from this queue2 collection
      * @param wait   waitingRoom data load from this wait collection
@@ -1029,13 +1019,15 @@ public class TrainStation extends Application {
         System.out.println("---------------------------------------------------------------------------------");
     }
 
+    //load method
     private void load(DBCollection collection, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
-        //remove loaded data to document (booked data)
-//            for (int j = 0; j < 42; j++) {
-//                document[j] = null;
-//            }
+
         if (y == 2) {
+            //remove loaded data to document (booked data)
+            for (int j = 0; j < 42; j++) {
+                document[j] = null;
+            }
             FindIterable<Document> details = doc.find();
             for (Document record : details) {
                 Document document1 = (Document) record.get("data");
