@@ -774,7 +774,7 @@ public class TrainStation extends Application {
         close.setOnAction(e -> {
             stage.close();
         });
-        close.setStyle("-fx-background-color: #eb3b5a;-fx-font-weight: 800;-fx-min-width: 150px;-fx-text-fill: #ffffff;-fx-min-height: 50px");
+        close.setStyle("-fx-background-color: #eb3b5a;-fx-font-weight: 600;-fx-min-width: 150px;-fx-text-fill: #ffffff;-fx-min-height: 50px");
         HBox hBox = new HBox();
         VBox vBox = new VBox();
         VBox vBox1 = new VBox();
@@ -782,7 +782,7 @@ public class TrainStation extends Application {
         vBox1.setPadding(new Insets(50, 0, 15, 90));
         hBox.getChildren().addAll(vBox, vBox1);
         Label label = new Label("SEAT NUMBER" + "\t\t\t" + "NAME");
-        label.setStyle("-fx-padding: 6px;-fx-color: #000000;-fx-font-weight: 700");
+        label.setStyle("-fx-padding: 6px;-fx-text-fill: #fbc531;-fx-font-weight: 700");
         Separator separator = new Separator(Orientation.HORIZONTAL);
         vBox.getChildren().addAll(label, separator);
         vBox1.setSpacing(12);
