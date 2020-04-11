@@ -26,6 +26,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TrainStation extends Application {
+    private static final int QUEUE_CAPACITY = 21;
+    private static final int PASSENGER_CAPACITY = 42;
     private static int maxLength1 = 0;
     private static int maxLength2 = 0;
     private static int maxTime1 = 0;
@@ -34,13 +36,13 @@ public class TrainStation extends Application {
     private static int minTime2 = 3;
 
 
-    private static Passenger[] Train = new Passenger[42];
-    private Passenger[] waitingRoom = new Passenger[42];
+    private static Passenger[] Train = new Passenger[PASSENGER_CAPACITY];
+    private Passenger[] waitingRoom = new Passenger[PASSENGER_CAPACITY];
     private PassengerQueue trainQueue = new PassengerQueue();
     private PassengerQueue trainQueue2 = new PassengerQueue();
 
     //save today booked detail for this document
-    private Document[] documents = new Document[42];
+    private Document[] documents = new Document[PASSENGER_CAPACITY];
 
     private static int bookedCount = 0;
     private int waitRoomCount = 0;
@@ -114,7 +116,8 @@ public class TrainStation extends Application {
                     simulation();
                     break;
                 case "w":
-                    adding();
+//                    adding();
+                    waiting();
                     displayTheWaitingRoom();
                     break;
                 case "q":
@@ -130,7 +133,7 @@ public class TrainStation extends Application {
     }
 
     /**
-     *display the waiting room
+     * display the waiting room
      */
     private void displayTheWaitingRoom() {
         Stage stage = new Stage();
@@ -139,6 +142,7 @@ public class TrainStation extends Application {
         pane.setMinWidth(200);
         pane.setId("pane");
         borderPane.setLeft(pane);
+        pane.setStyle("-fx-background-color: #333");
         Pane pane1 = new Pane();
         borderPane.setTop(pane1);
         ScrollPane scrollPane = new ScrollPane();
@@ -148,15 +152,15 @@ public class TrainStation extends Application {
         Label label = new Label("QUEUE I AND QUEUE II");
         label.setId("lable1");
         pane1.getChildren().add(label);
-        pane1.setStyle("-fx-background-color: #a4b0be");
+        pane1.setStyle("-fx-background-color: #333");
         Button button = new Button("waiting room");
         Button button3 = new Button("close");
         clear(pane1, gridPane);
-        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
+        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, PASSENGER_CAPACITY);
         button3.setLayoutY(450);
         button3.setId("close");
         button3.setOnAction(e -> stage.close());
-        pane.getChildren().addAll( button3,  button);
+        pane.getChildren().addAll(button3, button);
         Scene scene = new Scene(borderPane, 800, 600);
         scene.getStylesheets().add(getClass().getResource("button.css").toExternalForm());
         stage.setScene(scene);
@@ -253,27 +257,27 @@ public class TrainStation extends Application {
         Label label = new Label("QUEUE I AND QUEUE II");
         label.setId("lable1");
         pane1.getChildren().add(label);
-        pane1.setStyle("-fx-background-color: #a4b0be");
+        pane1.setStyle("-fx-background-color: #333");
         Button button = new Button("waiting room");
         Button button1 = new Button("train queue I");
         Button button3 = new Button("close");
         Button button4 = new Button("train queue II");
         clear(pane1, gridPane);
-        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
+        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, PASSENGER_CAPACITY);
         button.setLayoutY(20);
         button1.setLayoutY(80);
         button.setOnAction(e -> {
             clear(pane1, gridPane);
-            setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
+            setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, PASSENGER_CAPACITY);
         });
         button1.setOnAction(e -> {
             clear(pane1, gridPane);
-            setPane(pane1, gridPane, "TRAIN QUEUE I", trainQueue.getQueueArray(), 21);
+            setPane(pane1, gridPane, "TRAIN QUEUE I", trainQueue.getQueueArray(), QUEUE_CAPACITY);
         });
         button4.setLayoutY(140);
         button4.setOnAction(e -> {
             clear(pane1, gridPane);
-            setPane(pane1, gridPane, "TRAIN QUEUE II", trainQueue2.getQueueArray(), 21);
+            setPane(pane1, gridPane, "TRAIN QUEUE II", trainQueue2.getQueueArray(), QUEUE_CAPACITY);
         });
         button3.setLayoutY(450);
         button3.setId("close");
@@ -302,7 +306,7 @@ public class TrainStation extends Application {
         borderPane.setCenter(scrollPane);
         GridPane gridPane = new GridPane();
         scrollPane.setContent(gridPane);
-        pane1.setStyle("-fx-background-color: #a4b0be");
+        pane1.setStyle("-fx-background-color: #333");
         Button button = new Button("waiting room");
         Button button1 = new Button("train queue I");
         Button button2 = new Button("Train ");
@@ -312,25 +316,25 @@ public class TrainStation extends Application {
         Label label = new Label("");
         label.setId("lable1");
         clear(pane1, gridPane);
-        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
+        setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, PASSENGER_CAPACITY);
         button.setOnAction(e -> {
             clear(pane1, gridPane);
-            setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, 42);
+            setPane(pane1, gridPane, "WAITING ROOM", waitingRoom, PASSENGER_CAPACITY);
         });
         button1.setLayoutY(80);
         button1.setOnAction(e -> {
             clear(pane1, gridPane);
-            setPane(pane1, gridPane, "TRAIN QUEUE I", trainQueue.getQueueArray(), 21);
+            setPane(pane1, gridPane, "TRAIN QUEUE I", trainQueue.getQueueArray(), QUEUE_CAPACITY);
         });
         button2.setLayoutY(200);
         button2.setOnAction(e -> {
             clear(pane1, gridPane);
-            setTrain(pane1, gridPane, "TRAIN SEATS", Train, 42);
+            setTrain(pane1, gridPane, "TRAIN SEATS", Train, PASSENGER_CAPACITY);
         });
         button4.setLayoutY(140);
         button4.setOnAction(e -> {
             clear(pane1, gridPane);
-            setPane(pane1, gridPane, "TRAIN QUEUE II", trainQueue2.getQueueArray(), 21);
+            setPane(pane1, gridPane, "TRAIN QUEUE II", trainQueue2.getQueueArray(), QUEUE_CAPACITY);
         });
         button3.setLayoutY(450);
         button3.setId("close");
@@ -707,6 +711,7 @@ public class TrainStation extends Application {
         }
     }
 
+    //save report to text file
     private void saveReport(PassengerQueue queue, int x, String l) {
         try {
             int timeMin;
@@ -747,6 +752,66 @@ public class TrainStation extends Application {
 
     }
 
+    //add to waiting room gui
+    private void waiting() {
+        Stage stage = new Stage();
+        BorderPane borderPane = new BorderPane();
+        ScrollPane scrollPane = new ScrollPane();
+        Pane pane = new Pane();
+        Pane pane1 = new Pane();
+        borderPane.setTop(pane);
+        pane.setStyle("-fx-background-color: #333");
+        borderPane.setCenter(scrollPane);
+        borderPane.setBottom(pane1);
+        Label label2 = new Label("ADD TO WAITING ROOM");
+        label2.setStyle("-fx-text-fill: #ffffff;-fx-font-size: 30px;-fx-font-weight: 800");
+        pane1.setStyle("-fx-background-color: #333");
+        label2.setLayoutX(180);
+        pane.getChildren().add(label2);
+        Button close = new Button("close");
+        close.setLayoutX(330);
+        pane1.getChildren().add(close);
+        close.setOnAction(e -> {
+            stage.close();
+        });
+        close.setStyle("-fx-background-color: #eb3b5a;-fx-font-weight: 800;-fx-min-width: 150px;-fx-text-fill: #ffffff;-fx-min-height: 50px");
+        HBox hBox = new HBox();
+        VBox vBox = new VBox();
+        VBox vBox1 = new VBox();
+        vBox.setPadding(new Insets(10, 0, 15, 60));
+        vBox1.setPadding(new Insets(50, 0, 15, 90));
+        hBox.getChildren().addAll(vBox, vBox1);
+        Label label = new Label("SEAT NUMBER" + "\t\t\t" + "NAME");
+        label.setStyle("-fx-padding: 6px;-fx-color: #000000;-fx-font-weight: 700");
+        Separator separator = new Separator(Orientation.HORIZONTAL);
+        vBox.getChildren().addAll(label, separator);
+        vBox1.setSpacing(12);
+        for (int i = 0; i < PASSENGER_CAPACITY; i++) {
+            if (documents[i] != null) {
+                String seat = (String) documents[i].get("seat");
+                String name = (String) documents[i].get("name");
+                String sname = (String) documents[i].get("sname");
+                Label label1 = new Label("\t" + seat + "\t\t\t\t" + name+" "+sname);
+                label1.setStyle("-fx-padding: 10px;-fx-text-fill:#130f40;-fx-font-weight: 700;-fx-font-size: 14px");
+                vBox.getChildren().add(label1);
+                Button button = new Button("add" + seat);
+                button.setStyle("-fx-background-color: #22a6b3;-fx-text-fill: #ffffff;-fx-font-weight: 700;-fx-min-width: 120px");
+                vBox1.getChildren().addAll(button);
+                button.setOnAction(e -> {
+                    addTo(seat);
+                    button.setVisible(false);
+                    button.setDisable(false);
+                    label1.setStyle("-fx-padding: 10px;-fx-text-fill: #a5b1c2;-fx-font-weight: 700");
+                });
+            }
+        }
+        scrollPane.setContent(hBox);
+        Scene scene = new Scene(borderPane, 800, 650);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+
     //add data to waiting room
 
     /**
@@ -769,43 +834,6 @@ public class TrainStation extends Application {
         }
     }
 
-
-    public void adding() {
-        Scanner sc = new Scanner(System.in);
-        String run = "";
-        while (!run.equalsIgnoreCase("q")) {
-            displayWaitingRoom();
-            if (bookedCount > 0) {
-                System.out.println("\n\"Q\"  to exit");
-                System.out.print("\nEnter your seat number : ");
-                String sNum = sc.next().toLowerCase();
-                if (sNum.equalsIgnoreCase("q")) {
-                    break;
-                } else {
-                    System.out.println("-------------------------------------------------------------------------");
-                    if (sNum.matches("[0-9]+")) {
-                        if (Integer.parseInt(sNum) > 0 && Integer.parseInt(sNum) <= 42) {
-                            addTo(sNum);
-                        } else {
-                            System.out.println("-------------------------------------------------------------------------");
-                            System.out.println(">>> wrong input");
-                            System.out.println("-------------------------------------------------------------------------");
-                        }
-                    } else {
-                        System.out.println("-------------------------------------------------------------------------");
-                        System.out.println(">>> wrong input");
-                        System.out.println("-------------------------------------------------------------------------");
-                    }
-                    System.out.println("\"q/Q\"  to exit");
-                    System.out.println("\"ANY KEY\"  to add more");
-                    System.out.print("\nEnter your option : ");
-                    run = sc.next();
-                }
-            } else {
-                break;
-            }
-        }
-    }
 
     //form this method add passenger to the waiting room
     //and set passenger's attributes
@@ -854,32 +882,6 @@ public class TrainStation extends Application {
         } catch (Exception e) {
             System.out.println("-------------------------------------------------------------------------");
             System.out.println(">>> Some thing went wrong!! you CAN NOT add passenger");
-            System.out.println("-------------------------------------------------------------------------");
-        }
-    }
-
-
-    //display waiting room
-    private void displayWaitingRoom() {
-        System.out.println("\n===========================================================================");
-        System.out.println("**************************     TODAY BOOKINGS     ***************************\n");
-        boolean find = false;
-        try {
-            for (Document data : documents) {
-                if (data != null) {
-                    String seat = (String) data.get("seat");
-                    String name = (String) data.get("name");
-                    String sname = (String) data.get("sname");
-                    System.out.println(seat + " " + name + " " + sname);
-                    find = true;
-                }
-            }
-            if (!find) {
-                System.out.println("No one booked seat today");
-            }
-        } catch (Exception e) {
-            System.out.println("-------------------------------------------------------------------------");
-            System.out.println(">>> Some thing went wrong !!!");
             System.out.println("-------------------------------------------------------------------------");
         }
     }
@@ -940,15 +942,15 @@ public class TrainStation extends Application {
         System.out.println("\n=================================================================================");
         System.out.println("-----------------------------      SAVING DATA    -------------------------------");
         System.out.println("=================================================================================\n");
-        save(queue, 21, trainQueue.getQueueArray(), null, 1, null);
+        save(queue, QUEUE_CAPACITY, trainQueue.getQueueArray(), null, 1, null);
         System.out.println(">>> saved waiting room");
-        save(queue2, 21, trainQueue2.getQueueArray(), null, 1, null);
+        save(queue2, QUEUE_CAPACITY, trainQueue2.getQueueArray(), null, 1, null);
         System.out.println(">>> saved queue  one");
-        save(train, 42, Train, null, 1, null);
+        save(train, PASSENGER_CAPACITY, Train, null, 1, null);
         System.out.println(">>> saved queue two");
-        save(wait, 42, waitingRoom, null, 1, null);
+        save(wait, PASSENGER_CAPACITY, waitingRoom, null, 1, null);
         System.out.println(">>> saved train");
-        save(null, 42, null, documents, 2, doc);
+        save(null, PASSENGER_CAPACITY, null, documents, 2, doc);
         System.out.println(">>> saved document");
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("                                    SAVING FINISHED                              ");
@@ -962,7 +964,7 @@ public class TrainStation extends Application {
                 //clear previous data
                 doc.drop();
                 Document document1 = new Document();
-                for (int i = 0; i < 42; i++) {
+                for (int i = 0; i < x; i++) {
                     if (document[i] != null) {
                         document1.append("data", document[i]);
                         doc.insertOne(document1);
@@ -994,6 +996,7 @@ public class TrainStation extends Application {
 
     /**
      * load data to data structures
+     *
      * @param queue  queue one details load from this queue collection
      * @param queue2 queue2 data load from this queue2 collection
      * @param wait   waitingRoom data load from this wait collection
@@ -1023,36 +1026,35 @@ public class TrainStation extends Application {
     private void load(DBCollection collection, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
 
-        if (y == 2) {
-            //remove loaded data to document (booked data)
-            for (int j = 0; j < 42; j++) {
-                document[j] = null;
-            }
-            FindIterable<Document> details = doc.find();
-            for (Document record : details) {
-                Document document1 = (Document) record.get("data");
-                String seat = (String) document1.get("seat");
-                document[Integer.parseInt(seat) - 1] = document1;
-            }
-        }
-        if (y == 1) {
-            Gson gson = new Gson();
-            String now = LocalDate.now().toString();
-            DBCursor data = collection.find();
-            for (DBObject obj : data) {
-                String date = (String) obj.get("date");
-                if (date.equals(now)) {
-                    //get the saved object from the collection as a string
-                    String seat = (String) obj.get("object");
-                    //convert it to Passenger object using gson
-                    Passenger object = gson.fromJson(seat, Passenger.class);
-                    //add it according it's index
-                    int index = (int) obj.get("id");
-                    array[index] = object;
+            if (y == 2) {
+                //remove loaded data to document (booked data)
+                for (int j = 0; j < PASSENGER_CAPACITY; j++) {
+                    document[j] = null;
+                }
+                FindIterable<Document> details = doc.find();
+                for (Document record : details) {
+                    Document document1 = (Document) record.get("data");
+                    String seat = (String) document1.get("seat");
+                    document[Integer.parseInt(seat) - 1] = document1;
                 }
             }
-
-        }
+            if (y == 1) {
+                Gson gson = new Gson();
+                String now = LocalDate.now().toString();
+                DBCursor data = collection.find();
+                for (DBObject obj : data) {
+                    String date = (String) obj.get("date");
+                    if (date.equals(now)) {
+                        //get the saved object from the collection as a string
+                        String seat = (String) obj.get("object");
+                        //convert it to Passenger object using gson
+                        Passenger object = gson.fromJson(seat, Passenger.class);
+                        //add it according it's index
+                        int index = (int) obj.get("id");
+                        array[index] = object;
+                    }
+                }
+            }
         } catch (Exception e) {
             System.out.println("some thing went wrong");
         }

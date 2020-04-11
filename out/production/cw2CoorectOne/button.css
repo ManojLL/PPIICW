@@ -5,28 +5,30 @@
     -fx-text-fill: #ffffff;
     -fx-font-weight: 700;
 }
-.button:hover{
+
+.button:hover {
     -fx-background-color: #4b6584;
 }
 
-#close{
+#close {
     -fx-min-width: 200;
     -fx-background-color: rgba(239, 41, 89, 0.62);
     -fx-text-fill: #ffff;
     -fx-font-weight: 700;
 }
 
-#close:hover{
+#close:hover {
     -fx-background-color: #ff2754;
 }
 
-#pane{
+#pane {
     -fx-background-color: #a55eea !important;
 }
 
-#lable1{
+#lable1 {
     -fx-font-size: 25px;
     -fx-font-weight: 900;
     -fx-font-family: "DejaVu Sans";
     -fx-padding: 20px;
+    -fx-text-fill: #ffffff;
 }

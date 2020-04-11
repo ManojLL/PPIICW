@@ -1,5 +1,6 @@
 public class PassengerQueue {
-    private Passenger[] queueArray = new Passenger[21];
+    private static final int QUEUE_CAPACITY = 21;
+    private Passenger[] queueArray = new Passenger[QUEUE_CAPACITY];
     private static int first = 0;
     private int last = 0;
     private int maxStayInQueue = 0;
@@ -58,8 +59,8 @@ public class PassengerQueue {
         System.out.println("-----------------------------------------");
         System.out.println("***       add passenger details       ***");
         System.out.println("-----------------------------------------");
-        System.out.println("name = "+queueArray[last].getName());
-        System.out.println("seat = "+queueArray[last].getSeatNumber());
+        System.out.println("name = " + queueArray[last].getName());
+        System.out.println("seat = " + queueArray[last].getSeatNumber());
     }
 
     public Passenger[] getQueueArray() {
