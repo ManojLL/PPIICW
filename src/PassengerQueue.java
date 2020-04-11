@@ -5,7 +5,7 @@ public class PassengerQueue {
     private int last = 0;
     private int maxStayInQueue = 0;
     private int maxLength = 0;
-    private int minStayInQueue = 0;
+    private int minStayInQueue = 18;
 
     public void setMinStayInQueue(int minStayInQueue) {
         this.minStayInQueue = minStayInQueue;
