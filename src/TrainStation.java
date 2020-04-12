@@ -539,6 +539,8 @@ public class TrainStation extends Application {
                 setTime(trainQueue2.getQueueArray(), trainQueue2.getLast(), timeDelay2);
                 dataSetting(trainQueue2, trainQueue2.getLast());
                 trainQueue2.setLast(-1);
+            }else{
+                minTime2 = 0;
             }
             find = true;
         }
@@ -592,7 +594,7 @@ public class TrainStation extends Application {
             }
         }
         if (passenger.equals(trainQueue)) {
-            if (maxLength1 == 1) {
+            if (maxLength1 == 1 ) {
                 maxTime1 = tempTimeMax;
                 minTime1 = 0;
             } else {
@@ -600,7 +602,7 @@ public class TrainStation extends Application {
                 minTime1 = tempTimeMin;
             }
         } else {
-            if (maxLength2 == 1) {
+            if (maxLength2 == 1 ) {
                 maxTime2 = tempTimeMax;
                 minTime2 = 0;
             } else {
