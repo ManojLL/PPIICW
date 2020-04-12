@@ -213,8 +213,14 @@ public class TrainStation extends Application {
                 //get random number check is it greater than waiting  room length
                 //if waiting room count less than that number send all passengers in the wating room
                 if (num > waitRoomCount) {
+                    System.out.println("--------------------------------------------------");
+                    System.out.println(waitRoomCount+" passenger/passengers added to train queues");
+                    System.out.println("--------------------------------------------------");
                     addToueue(waitRoomCount);
                 } else {
+                    System.out.println("--------------------------------------------------");
+                    System.out.println(num+" passenger/passengers added to train queues");
+                    System.out.println("--------------------------------------------------");
                     addToueue(num);
                 }
             } else {
