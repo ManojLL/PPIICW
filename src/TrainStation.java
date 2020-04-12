@@ -26,26 +26,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TrainStation extends Application {
-    private static final int QUEUE_CAPACITY = 21;
-    private static final int PASSENGER_CAPACITY = 42;
-    private static int maxLength1 = 0;
-    private static int maxLength2 = 0;
-    private static int maxTime1 = 0;
-    private static int maxTime2 = 0;
-    private static int minTime1 = 18;
-    private static int minTime2 = 18;
+    private static final int QUEUE_CAPACITY = 21; //maximum capacity of a queue
+    private static final int PASSENGER_CAPACITY = 42;//maximum capacity of passengers
+    private static int maxLength1 = 0;//maximum length of queue 1
+    private static int maxLength2 = 0;//maximum length of queue two
+    private static int maxTime1 = 0;//maximum time of queue one
+    private static int maxTime2 = 0;//maximum time of queue two
+    private static int minTime1 = 18;//minimum time of queue one
+    private static int minTime2 = 18;//minimum time of queue two
 
-
+    //train queue & trin seats details
     private static Passenger[] Train = new Passenger[PASSENGER_CAPACITY];
+    //waiting room
     private Passenger[] waitingRoom = new Passenger[PASSENGER_CAPACITY];
+    //queue one
     private PassengerQueue trainQueue = new PassengerQueue();
+    //queue two
     private PassengerQueue trainQueue2 = new PassengerQueue();
 
     //save today booked detail for this document
     private Document[] documents = new Document[PASSENGER_CAPACITY];
-
+    //today booking count
     private static int bookedCount = 0;
-    private int waitRoomCount = 0;
+    //waiting room passengers count
+    private static int waitRoomCount = 0;
 
     public static void main(String[] args) {
         launch();
@@ -62,33 +66,37 @@ public class TrainStation extends Application {
         mongoLogger.setLevel(Level.OFF); // e.g. or Log.WARNING, etc.
         com.mongodb.MongoClient mongo = new MongoClient("localhost", 27017);
         MongoClient client = new MongoClient();
+        //use Mongo DB data base
         DB db = client.getDB("TrainStation");
-        //save and load objects
+        //these collections use to save and load objects
         DBCollection queue = db.getCollection("queue1");
         DBCollection queue2 = db.getCollection("queue2");
         DBCollection wait = db.getCollection("waitingRoom");
         DBCollection train = db.getCollection("train");
-        //load data
+        //these collections use to load data
         MongoDatabase database = mongo.getDatabase("dumbaraManikeTrain");
         MongoCollection<Document> toBadulla = database.getCollection("badulla");
         MongoCollection<Document> toColombo = database.getCollection("Colombo");
         MongoCollection<Document> doc = database.getCollection("doc");
-        //select the station bas=dull or colombo
-        //menu system
+        //select the station basdull or colombo
         selectDestination(toBadulla, toColombo);
-        System.out.println("\n===========================================================================\n");
+
+        //menu system
+        System.out.println("\n-----------------------------------------------------------------------------\n");
         Scanner sc = new Scanner(System.in);
         menu:
         while (true) {
-            System.out.println("\" W\"  add a passenger to the Waiting Room");
-            System.out.println("\" A\"  add a passenger to the trainQueue");
-            System.out.println("\" V\"  to view the trainQueue");
-            System.out.println("\" D\"  Delete passenger from the trainQueue");
-            System.out.println("\" S\"  Store trainQueue data");
-            System.out.println("\" L\"  Load data");
-            System.out.println("\" R\"  Run the simulation and produce report ");
-            System.out.println("\" Q\"  exit ");
-            System.out.print("\nEnter your option = ");
+            System.out.println("------------------------------------------------");
+            System.out.println("|\" W\"  add a passenger to the Waiting Room      |");
+            System.out.println("|\" A\"  add a passenger to the trainQueue        |");
+            System.out.println("|\" V\"  to view the trainQueue                   |");
+            System.out.println("|\" D\"  Delete passenger from the trainQueue     |");
+            System.out.println("|\" S\"  Store trainQueue data                    |");
+            System.out.println("|\" L\"  Load data                                |");
+            System.out.println("|\" R\"  Run the simulation and produce report    |");
+            System.out.println("|\" Q\"  exit                                     |");
+            System.out.println("------------------------------------------------");
+            System.out.print("Enter your option = ");
             String option = sc.next().toLowerCase();
             System.out.println("---------------------------------------------------------------------------");
 
@@ -119,11 +127,12 @@ public class TrainStation extends Application {
                 case "q":
                     break menu;
                 default:
-                    System.out.println("\n===========================================================================");
-                    System.out.println("*************************    INVALID INPUT    *****************************");
+                    System.out.println("\n-------------------------------------------------------------------------");
+                    System.out.println("*************************    INVALID INPUT    ***************************");
 
             }
-            System.out.println("===========================================================================\n");
+            System.out.println("--------------------------------------------------------------------------1" +
+                    "\n");
         }
 
     }
@@ -202,6 +211,7 @@ public class TrainStation extends Application {
             if (waitRoomCount != 0) {
                 int num = getRandInt();
                 //get random number check is it greater than waiting  room length
+                //if waiting room count less than that number send all passengers in the wating room
                 if (num > waitRoomCount) {
                     addToueue(waitRoomCount);
                 } else {
@@ -216,13 +226,19 @@ public class TrainStation extends Application {
         }
     }
 
+    //this method used to add passenger to queue
     private void addToueue(int num) {
         for (int i = 0; i < num; i++) {
             if (waitingRoom[0] != null) {
+                //select the shotest queue
+                //if queue lengths are equeal send passenger to first queue
                 if (trainQueue.getLast() > trainQueue2.getLast()) {
+                    //add passenger to the queue
                     trainQueue2.add(waitingRoom[0]);
+                    //dislay the add passenger's details
                     trainQueue2.display();
                     System.out.println("added to queue II");
+                    //increase queue last value
                     trainQueue2.setLast(1);
                 } else {
                     trainQueue.add(waitingRoom[0]);
@@ -230,6 +246,8 @@ public class TrainStation extends Application {
                     System.out.println("added to queue I");
                     trainQueue.setLast(1);
                 }
+                //set the queue
+                //1 index -> 0 index
                 setTheQueue(waitRoomCount, waitingRoom);
                 waitRoomCount--;
             }
@@ -406,13 +424,14 @@ public class TrainStation extends Application {
      * this method use to delete passenger from queue
      */
     private void delete() {
-        System.out.println("===================================================================");
+        System.out.println("------------------------------------------------------------------");
         System.out.println("******************    DELETE PASSENGER    ************************");
-        System.out.println("===================================================================");
+        System.out.println("------------------------------------------------------------------");
 
         Scanner sc = new Scanner(System.in);
         loop:
         while (true) {
+            //select the queue
             System.out.println("\"1.\"  queue I");
             System.out.println("\"2.\"  queue II");
             System.out.println("\"Q/q.\"  exit");
@@ -438,6 +457,7 @@ public class TrainStation extends Application {
 
     }
 
+    //delete passenger & return boolean value
     private boolean deletePassenger(Passenger[] array, int x) {
         boolean find = false;
         if (x != 0) {
@@ -449,11 +469,14 @@ public class TrainStation extends Application {
             Passenger deletePassenger = null;
             for (int i = 0; i < x; i++) {
                 if (array[i] != null) {
+                    //search passenger name
                     if (array[i].getName().equalsIgnoreCase(name)) {
                         deletePassenger = array[i];
                         for (int k = i; k < x; k++) {
                             //set the queue
+                            //it start in delete index
                             if (k == x - 1) {
+                                //if last index should be null when deleting a passenger
                                 array[k] = null;
                             } else {
                                 array[k] = array[k + 1];
@@ -468,8 +491,8 @@ public class TrainStation extends Application {
             if (find) {
                 System.out.println("------------------------------------------------");
                 System.out.println("delete completed !!");
-                System.out.println("Name = " + deletePassenger.getName());
-                System.out.println("seat = " + deletePassenger.getSeatNumber());
+                System.out.println("|Name = " + deletePassenger.getName() + "        |");
+                System.out.println("|seat = " + deletePassenger.getSeatNumber() + "  |");
                 System.out.println("------------------------------------------------");
 
             } else {
@@ -489,20 +512,27 @@ public class TrainStation extends Application {
      */
     private void simulation() {
         boolean find = false;
+        //set the max lengths
         maxLength1 = trainQueue.getLast();
         maxLength2 = trainQueue2.getLast();
+        //set the max length in all time
         if (trainQueue.getMaxLength() < maxLength1) {
             trainQueue.setMaxLength(maxLength1);
         }
         if (trainQueue2.getMaxLength() < maxLength2) {
             trainQueue2.setMaxLength(maxLength2);
         }
+        //passenger borded to train
         while (!trainQueue.isEmpty() || !trainQueue2.isEmpty()) {
+            //get the time
             int timeDelay = getRandInt() + getRandInt() + getRandInt();
             int timeDelay2 = getRandInt() + getRandInt() + getRandInt();
             if (!trainQueue.isEmpty()) {
+                //set time to passengers in the queue
                 setTime(trainQueue.getQueueArray(), trainQueue.getLast(), timeDelay);
+                //gather statistics
                 dataSetting(trainQueue, trainQueue.getLast());
+                //reduce 1 from last in the queue
                 trainQueue.setLast(-1);
             }
             if (!trainQueue2.isEmpty()) {
@@ -515,6 +545,7 @@ public class TrainStation extends Application {
         if (find) {
             showReport();
             for (int i = maxLength1; i > 0; i--) {
+                //boarded to train
                 bordToTrain(Train, trainQueue, maxLength1);
             }
             for (int i = maxLength2; i > 0; i--) {
@@ -533,6 +564,7 @@ public class TrainStation extends Application {
     }
 
     private void dataSetting(PassengerQueue passenger, int last) {
+        //gather statictics
         int tempTimeMax;
         int tempTimeMin;
         if (passenger.equals(trainQueue)) {
@@ -578,13 +610,17 @@ public class TrainStation extends Application {
         }
     }
 
-
+    //remove passenger from queue & add to train
     private void bordToTrain(Passenger[] train, PassengerQueue queue, int x) {
         train[queue.remove().getSeatNumber() - 1] = queue.remove();
+        //set the queue
         setTheQueue(x, queue.getQueueArray());
     }
 
-    //show the report
+    /**
+     * display the report
+     * this shows gathered statictics
+     */
     private void showReport() {
         Stage stage = new Stage();
         stage.setTitle("SIMULATION REPORT");
@@ -700,6 +736,7 @@ public class TrainStation extends Application {
         stage.showAndWait();
     }
 
+    //print the queues
     private void printQueues(HBox v, String label, PassengerQueue queue, int x) {
         VBox vBox = new VBox();
         v.getChildren().add(vBox);
@@ -740,7 +777,7 @@ public class TrainStation extends Application {
                 BufferedWriter bw = new BufferedWriter(fileWriter);
                 LocalDate now = LocalDate.now();
                 bw.write(String.valueOf(now));
-                bw.write(l);
+                bw.write("\n"+l);
                 bw.write(content);
                 bw.write("---------------------------------------\n");
                 bw.write("***   PASSENGER NAMES & DETAILS   ***\n");
@@ -817,17 +854,15 @@ public class TrainStation extends Application {
         stage.showAndWait();
     }
 
-
-    //add data to waiting room
-
     /**
      * from this method check user inputs
-     *
      * @param doc and add them to waiting room
+     *add data to waiting room
      */
     private void addDataToWaitingRoom(MongoCollection<Document> doc) {
         FindIterable<Document> data = doc.find();
         LocalDate todayDate = LocalDate.now();
+        //read dthe collecting
         for (Document record : data) {
             //get data from mongo collection
             LocalDate date = LocalDate.parse((String) record.get("date"));
@@ -840,11 +875,15 @@ public class TrainStation extends Application {
         }
     }
 
-
-    //form this method add passenger to the waiting room
-    //and set passenger's attributes
+    /**
+     * form this method add passenger to the waiting room
+     * and set passenger's attributes
+     * @param sNum (seat number)
+     */
     private void addTo(String sNum) {
         try {
+            //check passenger already in the queue
+            //if find the set @run as false
             if (documents[Integer.parseInt(sNum) - 1] != null) {
                 boolean run = true;
                 //get the seat number from the document array
@@ -862,14 +901,20 @@ public class TrainStation extends Application {
                     if (sNum.equalsIgnoreCase(seat)) {
                         String name = (String) documents[Integer.parseInt(sNum) - 1].get("name");
                         String sname = (String) documents[Integer.parseInt(sNum) - 1].get("sname");
-//                        String id = (String) documents[Integer.parseInt(sNum) - 1].get("id");
+                        //create a new Passenger in waiting room array
                         waitingRoom[waitRoomCount] = new Passenger();
+                        //set the name
                         waitingRoom[waitRoomCount].setName(name, sname);
+                        //set the seat number
                         waitingRoom[waitRoomCount].setSeatNumber(Integer.parseInt(seat));
+                        //display passenger details
                         waitingRoom[waitRoomCount].display();
+                        //increase waitingRoom count
                         waitRoomCount++;
+                        //remove passenger from booking details (documents)
                         documents[Integer.parseInt(sNum) - 1] = null;
                         bookedCount--;
+                        //display passenger details
                         System.out.println("-------------------------------------------------------------------------");
                         System.out.println("\n>>>>" + name + " " + sname + " " + "added to waiting room ");
                         System.out.println("-------------------------------------------------------------------------");
@@ -895,9 +940,9 @@ public class TrainStation extends Application {
     //select what is the station
     private void selectDestination(MongoCollection<Document> toBadulla, MongoCollection<Document> toColombo) {
         try {
-            System.out.println("\n===========================================================================");
-            System.out.println("*********************     DENUWARA MANIKE TRAIN      **********************");
-            System.out.println("===========================================================================\n");
+            System.out.println("\n-------------------------------------------------------------------------");
+            System.out.println("********************     DENUWARA MANIKE TRAIN      *********************");
+            System.out.println("-------------------------------------------------------------------------\n");
             Scanner sc = new Scanner(System.in);
             System.out.println("TODAY : " + LocalDate.now());
             /*
@@ -907,7 +952,7 @@ public class TrainStation extends Application {
 
             loop:
             while (true) {
-                System.out.println("\n===========================================================================");
+                System.out.println("\n---------------------------------------------------------------------------");
                 System.out.println("************************    SELECT THE STATION   **************************\n");
                 System.out.println("\"1\" Colombo");
                 System.out.println("\"2\" Badulla");
@@ -945,9 +990,9 @@ public class TrainStation extends Application {
      * @param train  train details save in this trin collection
      */
     private void saveDetails(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train) {
-        System.out.println("\n=================================================================================");
+        System.out.println("\n---------------------------------------------------------------------------------");
         System.out.println("-----------------------------      SAVING DATA    -------------------------------");
-        System.out.println("=================================================================================\n");
+        System.out.println("---------------------------------------------------------------------------------\n");
         save(queue, QUEUE_CAPACITY, trainQueue.getQueueArray(), null, 1, null);
         System.out.println(">>> saved waiting room");
         save(queue2, QUEUE_CAPACITY, trainQueue2.getQueueArray(), null, 1, null);
@@ -1002,7 +1047,6 @@ public class TrainStation extends Application {
 
     /**
      * load data to data structures
-     *
      * @param queue  queue one details load from this queue collection
      * @param queue2 queue2 data load from this queue2 collection
      * @param wait   waitingRoom data load from this wait collection
@@ -1010,9 +1054,9 @@ public class TrainStation extends Application {
      * @param train  this is calling in load method
      */
     private void loadData(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train) {
-        System.out.println("\n=================================================================================");
+        System.out.println("\n-------------------------------------------------------------------------------");
         System.out.println("-----------------------------     LOADING DATA    -------------------------------");
-        System.out.println("=================================================================================\n");
+        System.out.println("-------------------------------------------------------------------------------\n");
         System.out.println(">>> loaded waiting room");
         load(queue, trainQueue.getQueueArray(), null, 1, null);
         System.out.println(">>> loaded queue one");
