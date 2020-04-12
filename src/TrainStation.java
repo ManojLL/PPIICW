@@ -1001,6 +1001,10 @@ public class TrainStation extends Application {
         System.out.println("\n---------------------------------------------------------------------------------");
         System.out.println("-----------------------------      SAVING DATA    -------------------------------");
         System.out.println("---------------------------------------------------------------------------------\n");
+        /*
+          when calling to save method there have passed some null values
+          coz i had use that method two
+         */
         save(queue, QUEUE_CAPACITY, trainQueue.getQueueArray(), null, 1, null);
         System.out.println(">>> saved waiting room");
         save(queue2, QUEUE_CAPACITY, trainQueue2.getQueueArray(), null, 1, null);
@@ -1016,12 +1020,24 @@ public class TrainStation extends Application {
         System.out.println("---------------------------------------------------------------------------------");
     }
 
-    //save data
+    /**
+     *saving data in to BD collections in mogoDB
+     * @param collection mongo collection
+     * @param x capacity of arrays
+     * @param array the array what want to save
+     * @param document  the document
+     * @param y this used what have save
+     *          if y = 1 array is about passengers
+     *          if y = 2 array is a document array
+     * @param doc this is a mongo collection
+     *            and other collection are DBcollection
+     */
     private void save(DBCollection collection, int x, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
             if (y == 2) {
                 //clear previous data
                 doc.drop();
+                //saving data in document
                 Document document1 = new Document();
                 for (int i = 0; i < x; i++) {
                     if (document[i] != null) {
@@ -1031,7 +1047,6 @@ public class TrainStation extends Application {
                     }
                 }
             }
-
             if (y == 1) {
                 //clear the collection before add data
                 collection.drop();
@@ -1039,7 +1054,7 @@ public class TrainStation extends Application {
                 Gson gson = new Gson();
                 for (int i = 0; i < x; i++) {
                     if (array[i] != null) {
-                        //convert object to string using Gson
+                        //convert object to string using Gson(convert to json file)
                         String json = gson.toJson(array[i]);
                         //add a id and date fore it
                         BasicDBObject basicDBObject = new BasicDBObject("object", json).append("id", i).append("date", now);
@@ -1080,7 +1095,17 @@ public class TrainStation extends Application {
         System.out.println("---------------------------------------------------------------------------------");
     }
 
-    //load method
+    /**
+     *loading data in to BD collections in mogoDB
+     * @param collection mongo collection
+     * @param array the array what want to save
+     * @param document  the document
+     * @param y this used what have save
+     *          if y = 1 array is about passengers
+     *          if y = 2 array is a document array
+     * @param doc this is a mongo collection
+     *            and other collection are DBcollection
+     */
     private void load(DBCollection collection, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
 
