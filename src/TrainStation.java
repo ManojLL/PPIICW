@@ -56,7 +56,7 @@ public class TrainStation extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws InterruptedException {
         //disable the warnings and information
         /*
          *create connection to mongoDB
@@ -515,7 +515,7 @@ public class TrainStation extends Application {
      * this method used to show the simulate report
      * and add passenger to the train
      */
-    private void simulation() {
+    private void simulation() throws InterruptedException {
         boolean find = false;
         //set the max lengths
         maxLength1 = trainQueue.getLast();
@@ -532,16 +532,24 @@ public class TrainStation extends Application {
             //get the time
             int timeDelay = getRandInt() + getRandInt() + getRandInt();
             int timeDelay2 = getRandInt() + getRandInt() + getRandInt();
+            int x = 0;
+            int y = 0;
             if (!trainQueue.isEmpty()) {
                 //set time to passengers in the queue
-                setTime(trainQueue.getQueueArray(), trainQueue.getLast(), timeDelay);
+                setTime(trainQueue.getQueueArray(), trainQueue.getLast(), timeDelay,x);
+                x++;
+                //add time delay
+                Thread.sleep(timeDelay);
                 //gather statistics
                 dataSetting(trainQueue, trainQueue.getLast());
                 //reduce 1 from last in the queue
                 trainQueue.setLast(-1);
+
             }
             if (!trainQueue2.isEmpty()) {
-                setTime(trainQueue2.getQueueArray(), trainQueue2.getLast(), timeDelay2);
+                setTime(trainQueue2.getQueueArray(), trainQueue2.getLast(), timeDelay2,y);
+                y++;
+                Thread.sleep(timeDelay2);
                 dataSetting(trainQueue2, trainQueue2.getLast());
                 trainQueue2.setLast(-1);
             }else{
@@ -564,8 +572,8 @@ public class TrainStation extends Application {
     }
 
     //set waiting time to Passengers in the queue
-    private void setTime(Passenger[] passenger, int x, int time) {
-        for (int i = 0; i < x; i++) {
+    private void setTime(Passenger[] passenger, int x, int time,int y) {
+        for (int i = y; i < x; i++) {
             passenger[i].setSecondsInQueue(time);
         }
     }
