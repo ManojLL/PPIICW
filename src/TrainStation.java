@@ -83,6 +83,7 @@ public class TrainStation extends Application {
         MongoCollection<Document> toBadulla = database.getCollection("badulla");
         MongoCollection<Document> toColombo = database.getCollection("Colombo");
         MongoCollection<Document> doc = database.getCollection("doc");
+        MongoCollection<Document> count = database.getCollection("count");
         //select the station basdull or colombo
         selectDestination(toBadulla, toColombo);
 
@@ -117,10 +118,10 @@ public class TrainStation extends Application {
                     delete();
                     break;
                 case "s":
-                    saveDetails(queue, queue2, wait, doc, train);
+                    saveDetails(queue, queue2, wait, doc, train, count);
                     break;
                 case "l":
-                    loadData(queue, queue2, wait, doc, train);
+                    loadData(queue, queue2, wait, doc, train, count);
                     break;
                 case "r":
                     simulation();
@@ -516,6 +517,10 @@ public class TrainStation extends Application {
      * and add passenger to the train
      */
     private void simulation() {
+        maxTime1 = 0;
+        maxTime2 = 0;
+        minTime2 = 18;
+        minTime1 = 18;
         boolean find = false;
         //set the max lengths
         maxLength1 = trainQueue.getLast();
@@ -881,7 +886,7 @@ public class TrainStation extends Application {
             //get data from mongo collection
             LocalDate date = LocalDate.parse((String) record.get("date"));
             //set and add data for waitingRoom specific date(current date)
-            if (Period.between(todayDate, date).getDays() == 1) {
+            if (Period.between(todayDate, date).getDays() == 0) {
                 int seat = Integer.parseInt((String) record.get("seat"));
                 documents[seat - 1] = record;
                 bookedCount++;
@@ -1000,7 +1005,7 @@ public class TrainStation extends Application {
      * @param doc    booked details save in this doc collection
      * @param train  train details save in this trin collection
      */
-    private void saveDetails(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train) {
+    private void saveDetails(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train, MongoCollection<Document> count) {
         System.out.println("\n---------------------------------------------------------------------------------");
         System.out.println("-----------------------------      SAVING DATA    -------------------------------");
         System.out.println("---------------------------------------------------------------------------------\n");
@@ -1021,6 +1026,20 @@ public class TrainStation extends Application {
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("                                    SAVING FINISHED                              ");
         System.out.println("---------------------------------------------------------------------------------");
+
+        //save counts in the programme
+        count.drop();
+        Document document1 = new Document();
+        document1.append("wait", waitRoomCount);
+        document1.append("queue1", trainQueue.getLast());
+        document1.append("queue2", trainQueue2.getLast());
+        document1.append("maxLength1", trainQueue.getMaxLength());
+        document1.append("maxLength2", trainQueue2.getMaxLength());
+        document1.append("maxStay1", trainQueue.getMaxStayInQueue());
+        document1.append("maxStay2", trainQueue2.getMaxStayInQueue());
+        document1.append("minStay1", trainQueue.getMinStayInQueue());
+        document1.append("minStay2", trainQueue2.getMinStayInQueue());
+        count.insertOne(document1);
     }
 
     /*
@@ -1042,6 +1061,7 @@ public class TrainStation extends Application {
                 doc.drop();
                 //saving data in document
                 Document document1 = new Document();
+                document1.clear();
                 for (int i = 0; i < x; i++) {
                     if (document[i] != null) {
                         document1.append("data", document[i]);
@@ -1079,7 +1099,7 @@ public class TrainStation extends Application {
      * @param doc    booked detail load from this doc collection
      * @param train  this is calling in load method
      */
-    private void loadData(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train) {
+    private void loadData(DBCollection queue, DBCollection queue2, DBCollection wait, MongoCollection<Document> doc, DBCollection train, MongoCollection<Document> count) {
         System.out.println("\n-------------------------------------------------------------------------------");
         System.out.println("-----------------------------     LOADING DATA    -------------------------------");
         System.out.println("-------------------------------------------------------------------------------\n");
@@ -1096,6 +1116,30 @@ public class TrainStation extends Application {
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("                                  LOADING FINISHED                            ");
         System.out.println("---------------------------------------------------------------------------------");
+
+        //load counts
+        FindIterable<Document> details = count.find();
+        for (Document record : details) {
+            int waitCount = (int) record.get("wait");
+            int queue1 = (int) record.get("queue1");
+            int queue2L = (int) record.get("queue2");
+            int maxS1 = (int) record.get("maxStay1");
+            int maxS2 = (int) record.get("maxStay2");
+            int minS1 = (int) record.get("minStay1");
+            int minS2 = (int) record.get("minStay2");
+            int maxL1 = (int) record.get("maxLength1");
+            int maxL2 = (int) record.get("maxLength2");
+            waitRoomCount = waitCount;
+            trainQueue.setLast(queue1);
+            trainQueue2.setLast(queue2L);
+            trainQueue.setMaxLength(maxL1);
+            trainQueue2.setMaxLength(maxL2);
+            trainQueue.setMaxStayInQueue(maxS1);
+            trainQueue2.setMaxStayInQueue(maxS2);
+            trainQueue.setMinStayInQueue(minS1);
+            trainQueue2.setMinStayInQueue(minS2);
+        }
+
     }
 
     /*
