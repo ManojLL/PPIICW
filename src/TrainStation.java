@@ -1,3 +1,9 @@
+/*
+ * date : 2020-04-13
+ * name : Manoj Lakshan Rathnapriya
+ * IIT id : 2019274
+ * uoW iD : w1761261
+ */
 import com.google.gson.Gson;
 import com.mongodb.*;
 import com.mongodb.client.FindIterable;
@@ -34,7 +40,6 @@ public class TrainStation extends Application {
     private static int maxTime2 = 0;//maximum time of queue two
     private static int minTime1 = 18;//minimum time of queue one
     private static int minTime2 = 18;//minimum time of queue two
-
     //train queue & trin seats details
     private static Passenger[] Train = new Passenger[PASSENGER_CAPACITY];
     //waiting room
@@ -43,7 +48,6 @@ public class TrainStation extends Application {
     private PassengerQueue trainQueue = new PassengerQueue();
     //queue two
     private PassengerQueue trainQueue2 = new PassengerQueue();
-
     //save today booked detail for this document
     private Document[] documents = new Document[PASSENGER_CAPACITY];
     //today booking count
@@ -131,8 +135,7 @@ public class TrainStation extends Application {
                     System.out.println("*************************    INVALID INPUT    ***************************");
 
             }
-            System.out.println("--------------------------------------------------------------------------1" +
-                    "\n");
+            System.out.println("--------------------------------------------------------------------------\n");
         }
 
     }
@@ -184,7 +187,6 @@ public class TrainStation extends Application {
             }
         }
     }
-
 
     /*
      * generate a number  between 1 and 6
@@ -432,7 +434,6 @@ public class TrainStation extends Application {
         System.out.println("------------------------------------------------------------------");
         System.out.println("******************    DELETE PASSENGER    ************************");
         System.out.println("------------------------------------------------------------------");
-
         Scanner sc = new Scanner(System.in);
         loop:
         while (true) {
@@ -491,7 +492,6 @@ public class TrainStation extends Application {
                     }
                 }
             }
-
             if (find) {
                 System.out.println("------------------------------------------------");
                 System.out.println("delete completed !!");
@@ -536,7 +536,6 @@ public class TrainStation extends Application {
             //get the time
             int timeDelay = getRandInt() + getRandInt() + getRandInt();
             int timeDelay2 = getRandInt() + getRandInt() + getRandInt();
-
             if (!trainQueue.isEmpty()) {
                 //set time to passengers in the queue
                 setTime(trainQueue.getQueueArray(), maxLength1, timeDelay, x);
