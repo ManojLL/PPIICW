@@ -4,6 +4,7 @@
  * IIT id : 2019274
  * uoW iD : w1761261
  */
+
 import com.google.gson.Gson;
 import com.mongodb.*;
 import com.mongodb.client.FindIterable;
@@ -528,7 +529,7 @@ public class TrainStation extends Application {
         }
         //passenger borded to train
         /*
-        *this x and y used to increas the fist element of queues
+         *this x and y used to increas the fist element of queues
          */
         int x = 0;
         int y = 0;
@@ -576,6 +577,7 @@ public class TrainStation extends Application {
         }
     }
 
+    //set data to report
     private void dataSetting(PassengerQueue passenger, int last) {
         //gather statictics
         int tempTimeMax;
@@ -908,7 +910,6 @@ public class TrainStation extends Application {
                         }
                     }
                 }
-
                 if (run) {
                     if (sNum.equalsIgnoreCase(seat)) {
                         String name = (String) documents[Integer.parseInt(sNum) - 1].get("name");
@@ -994,7 +995,6 @@ public class TrainStation extends Application {
 
     /*
      * save data to mongo collect
-     *
      * @param queue  queue one save here
      * @param queue2 queue2 save here
      * @param wait   waitingRoom in this  wait collection
@@ -1112,7 +1112,6 @@ public class TrainStation extends Application {
      */
     private void load(DBCollection collection, Passenger[] array, Document[] document, int y, MongoCollection<Document> doc) {
         try {
-
             if (y == 2) {
                 //remove loaded data to document (booked data)
                 for (int j = 0; j < PASSENGER_CAPACITY; j++) {
