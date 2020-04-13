@@ -459,7 +459,6 @@ public class TrainStation extends Application {
                     System.out.println("wrong input");
             }
         }
-
     }
 
     //delete passenger & return boolean value
