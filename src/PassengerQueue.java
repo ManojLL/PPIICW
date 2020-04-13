@@ -52,7 +52,7 @@ public class PassengerQueue {
     }
 
     public boolean isFull() {
-        return last == 21;
+        return last == QUEUE_CAPACITY;
     }
 
     public void display() {

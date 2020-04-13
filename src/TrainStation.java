@@ -137,7 +137,7 @@ public class TrainStation extends Application {
 
     }
 
-    /**
+    /*
      * display the waiting room
      */
     private void displayTheWaitingRoom() {
@@ -186,9 +186,8 @@ public class TrainStation extends Application {
     }
 
 
-    /**
+    /*
      * generate a number  between 1 and 6
-     *
      * @return int
      * this helps to send passenger from waiting room to queue and get the delay time
      */
@@ -197,7 +196,7 @@ public class TrainStation extends Application {
         return random.nextInt(6) + 1;
     }
 
-    /***
+    /*
      * htis is gui add a passenger to the train queue
      * add passenger to the queue
      */
@@ -310,7 +309,7 @@ public class TrainStation extends Application {
     }
 
 
-    /**
+    /*
      * this method use to view waiting room,queue, and train
      */
     private void viewQueue() {
@@ -426,7 +425,7 @@ public class TrainStation extends Application {
         }
     }
 
-    /**
+    /*
      * this method use to delete passenger from queue
      */
     private void delete() {
@@ -512,7 +511,7 @@ public class TrainStation extends Application {
         return find;
     }
 
-    /**
+    /*
      * this method used to show the simulate report
      * and add passenger to the train
      */
@@ -625,7 +624,7 @@ public class TrainStation extends Application {
         setTheQueue(x, queue.getQueueArray());
     }
 
-    /**
+    /*
      * display the report
      * this shows gathered statictics
      */
@@ -862,7 +861,7 @@ public class TrainStation extends Application {
         stage.showAndWait();
     }
 
-    /**
+    /*
      * from this method check user inputs
      * @param doc and add them to waiting room
      *add data to waiting room
@@ -883,7 +882,7 @@ public class TrainStation extends Application {
         }
     }
 
-    /**
+    /*
      * form this method add passenger to the waiting room
      * and set passenger's attributes
      * @param sNum (seat number)
@@ -988,7 +987,7 @@ public class TrainStation extends Application {
         }
     }
 
-    /**
+    /*
      * save data to mongo collect
      *
      * @param queue  queue one save here
@@ -1020,7 +1019,7 @@ public class TrainStation extends Application {
         System.out.println("---------------------------------------------------------------------------------");
     }
 
-    /**
+    /*
      *saving data in to BD collections in mogoDB
      * @param collection mongo collection
      * @param x capacity of arrays
@@ -1068,7 +1067,7 @@ public class TrainStation extends Application {
         }
     }
 
-    /**
+    /*
      * load data to data structures
      * @param queue  queue one details load from this queue collection
      * @param queue2 queue2 data load from this queue2 collection
@@ -1095,7 +1094,7 @@ public class TrainStation extends Application {
         System.out.println("---------------------------------------------------------------------------------");
     }
 
-    /**
+    /*
      *loading data in to BD collections in mogoDB
      * @param collection mongo collection
      * @param array the array what want to save
