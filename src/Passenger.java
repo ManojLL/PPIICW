@@ -18,7 +18,7 @@ public class Passenger {
     }
 
     public void setSecondsInQueue(int sec) {
-        this.secondsInQueue = sec;
+        this.secondsInQueue = secondsInQueue + sec;
     }
 
     public void display() {

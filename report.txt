@@ -1,1 +1,53 @@
 
+2020-04-13
+QUEUE I
+minimum time = 6
+maximum time = 11
+average time = 5.0
+maximum length = 3
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+sinuaa aaaa 16 11
+a a 11 8
+bhb ggh 13 6
+------------------------------------------
+===========================================================================================
+2020-04-13
+QUEUE II
+minimum time = 5
+maximum time = 8
+average time = 4.0
+maximum length = 3
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+nsho xfgvb 8 7
+amarabandu hbs 7 5
+manoj aaaaaaa 10 8
+------------------------------------------
+===========================================================================================
+2020-04-13
+QUEUE I
+minimum time = 9
+maximum time = 36
+average time = 15.0
+maximum length = 3
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+manoj aaaaaaa 10 36
+bhb ggh 13 24
+a a 11 9
+------------------------------------------
+===========================================================================================
+2020-04-13
+QUEUE II
+minimum time = 11
+maximum time = 21
+average time = 10.0
+maximum length = 3
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+amarabandu hbs 7 21
+nsho xfgvb 8 17
+sinuaa aaaa 16 11
+------------------------------------------
+

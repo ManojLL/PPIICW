@@ -213,12 +213,12 @@ public class TrainStation extends Application {
                 //if waiting room count less than that number send all passengers in the wating room
                 if (num > waitRoomCount) {
                     System.out.println("--------------------------------------------------");
-                    System.out.println(waitRoomCount+" passenger/passengers added to train queues");
+                    System.out.println(waitRoomCount + " passenger/passengers added to train queues");
                     System.out.println("--------------------------------------------------");
                     addToueue(waitRoomCount);
                 } else {
                     System.out.println("--------------------------------------------------");
-                    System.out.println(num+" passenger/passengers added to train queues");
+                    System.out.println(num + " passenger/passengers added to train queues");
                     System.out.println("--------------------------------------------------");
                     addToueue(num);
                 }
@@ -528,15 +528,19 @@ public class TrainStation extends Application {
             trainQueue2.setMaxLength(maxLength2);
         }
         //passenger borded to train
+        /*
+        *this x and y used to increas the fist element of queues
+         */
+        int x = 0;
+        int y = 0;
         while (!trainQueue.isEmpty() || !trainQueue2.isEmpty()) {
             //get the time
             int timeDelay = getRandInt() + getRandInt() + getRandInt();
             int timeDelay2 = getRandInt() + getRandInt() + getRandInt();
-            int x = 0;
-            int y = 0;
+
             if (!trainQueue.isEmpty()) {
                 //set time to passengers in the queue
-                setTime(trainQueue.getQueueArray(), trainQueue.getLast(), timeDelay,x);
+                setTime(trainQueue.getQueueArray(), maxLength1, timeDelay, x);
                 x++;
                 //add time delay
                 Thread.sleep(timeDelay);
@@ -547,12 +551,12 @@ public class TrainStation extends Application {
 
             }
             if (!trainQueue2.isEmpty()) {
-                setTime(trainQueue2.getQueueArray(), trainQueue2.getLast(), timeDelay2,y);
+                setTime(trainQueue2.getQueueArray(), maxLength2, timeDelay2, y);
                 y++;
                 Thread.sleep(timeDelay2);
                 dataSetting(trainQueue2, trainQueue2.getLast());
                 trainQueue2.setLast(-1);
-            }else{
+            } else {
                 minTime2 = 0;
             }
             find = true;
@@ -572,7 +576,7 @@ public class TrainStation extends Application {
     }
 
     //set waiting time to Passengers in the queue
-    private void setTime(Passenger[] passenger, int x, int time,int y) {
+    private void setTime(Passenger[] passenger, int x, int time, int y) {
         for (int i = y; i < x; i++) {
             passenger[i].setSecondsInQueue(time);
         }
@@ -607,7 +611,7 @@ public class TrainStation extends Application {
             }
         }
         if (passenger.equals(trainQueue)) {
-            if (maxLength1 == 1 ) {
+            if (maxLength1 == 1) {
                 maxTime1 = tempTimeMax;
                 minTime1 = 0;
             } else {
@@ -615,7 +619,7 @@ public class TrainStation extends Application {
                 minTime1 = tempTimeMin;
             }
         } else {
-            if (maxLength2 == 1 ) {
+            if (maxLength2 == 1) {
                 maxTime2 = tempTimeMax;
                 minTime2 = 0;
             } else {
@@ -792,7 +796,7 @@ public class TrainStation extends Application {
                 BufferedWriter bw = new BufferedWriter(fileWriter);
                 LocalDate now = LocalDate.now();
                 bw.write(String.valueOf(now));
-                bw.write("\n"+l);
+                bw.write("\n" + l);
                 bw.write(content);
                 bw.write("---------------------------------------\n");
                 bw.write("***   PASSENGER NAMES & DETAILS   ***\n");
