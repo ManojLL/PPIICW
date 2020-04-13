@@ -243,7 +243,7 @@ public class TrainStation extends Application {
                 if (trainQueue.getLast() > trainQueue2.getLast()) {
                     //add passenger to the queue
                     trainQueue2.add(waitingRoom[0]);
-                    //dislay the add passenger's details
+                    //display the add passenger's details
                     trainQueue2.display();
                     System.out.println("added to queue II");
                     //increase queue last value
@@ -542,14 +542,14 @@ public class TrainStation extends Application {
                 setTime(trainQueue.getQueueArray(), maxLength1, timeDelay, x);
                 x++;
                 //gather statistics
-                dataSetting(trainQueue, trainQueue.getLast());
+                dataSetting(trainQueue, maxLength1);
                 //reduce 1 from last in the queue
                 trainQueue.setLast(-1);
             }
             if (!trainQueue2.isEmpty()) {
                 setTime(trainQueue2.getQueueArray(), maxLength2, timeDelay2, y);
                 y++;
-                dataSetting(trainQueue2, trainQueue2.getLast());
+                dataSetting(trainQueue2, maxLength2);
                 trainQueue2.setLast(-1);
             } else {
                 minTime2 = 0;
