@@ -542,18 +542,14 @@ public class TrainStation extends Application {
                 //set time to passengers in the queue
                 setTime(trainQueue.getQueueArray(), maxLength1, timeDelay, x);
                 x++;
-                //add time delay
-                Thread.sleep(timeDelay);
                 //gather statistics
                 dataSetting(trainQueue, trainQueue.getLast());
                 //reduce 1 from last in the queue
                 trainQueue.setLast(-1);
-
             }
             if (!trainQueue2.isEmpty()) {
                 setTime(trainQueue2.getQueueArray(), maxLength2, timeDelay2, y);
                 y++;
-                Thread.sleep(timeDelay2);
                 dataSetting(trainQueue2, trainQueue2.getLast());
                 trainQueue2.setLast(-1);
             } else {
@@ -811,7 +807,6 @@ public class TrainStation extends Application {
             System.out.println("Some thing went wrong");
             ioe.printStackTrace();
         }
-
     }
 
     //add to waiting room gui
