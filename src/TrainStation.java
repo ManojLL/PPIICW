@@ -515,7 +515,7 @@ public class TrainStation extends Application {
      * this method used to show the simulate report
      * and add passenger to the train
      */
-    private void simulation() throws InterruptedException {
+    private void simulation() {
         boolean find = false;
         //set the max lengths
         maxLength1 = trainQueue.getLast();
@@ -962,7 +962,6 @@ public class TrainStation extends Application {
              *create connection to mongoDB
              * use two collection
              */
-
             loop:
             while (true) {
                 System.out.println("\n---------------------------------------------------------------------------");
