@@ -216,14 +216,14 @@ public class TrainStation extends Application {
                 //get random number check is it greater than waiting  room length
                 //if waiting room count less than that number send all passengers in the wating room
                 if (num > waitRoomCount) {
-                    System.out.println("--------------------------------------------------");
-                    System.out.println(waitRoomCount + " passenger/passengers added to train queues");
-                    System.out.println("--------------------------------------------------");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setContentText(waitRoomCount + " passenger/passengers added to train queues");
+                    alert.showAndWait();
                     addToueue(waitRoomCount);
                 } else {
-                    System.out.println("--------------------------------------------------");
-                    System.out.println(num + " passenger/passengers added to train queues");
-                    System.out.println("--------------------------------------------------");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setContentText(num + " passenger/passengers added to train queues");
+                    alert.showAndWait();
                     addToueue(num);
                 }
             } else {
@@ -606,8 +606,8 @@ public class TrainStation extends Application {
 
                 if (time < tempTimeMin) {
                     tempTimeMin = time;
-                    if (passenger.getMinStayInQueue() > tempTimeMin)
-                        passenger.setMinStayInQueue(tempTimeMin);
+                    if (passenger.getMinStayInQueue() > time)
+                        passenger.setMinStayInQueue(time);
                 }
             }
         }
@@ -623,6 +623,7 @@ public class TrainStation extends Application {
             if (maxLength2 == 1) {
                 maxTime2 = tempTimeMax;
                 minTime2 = 0;
+                System.out.println(11);
             } else {
                 maxTime2 = tempTimeMax;
                 minTime2 = tempTimeMin;
@@ -847,7 +848,7 @@ public class TrainStation extends Application {
         label.setStyle("-fx-padding: 6px;-fx-text-fill: #fbc531;-fx-font-weight: 700");
         Separator separator = new Separator(Orientation.HORIZONTAL);
         vBox.getChildren().addAll(label, separator);
-        vBox1.setSpacing(12);
+        vBox1.setSpacing(11.5);
         for (int i = 0; i < PASSENGER_CAPACITY; i++) {
             if (documents[i] != null) {
                 String seat = (String) documents[i].get("seat");
@@ -856,7 +857,7 @@ public class TrainStation extends Application {
                 Label label1 = new Label("\t" + seat + "\t\t\t\t" + name + " " + sname);
                 label1.setStyle("-fx-padding: 10px;-fx-text-fill:#130f40;-fx-font-weight: 700;-fx-font-size: 14px");
                 vBox.getChildren().add(label1);
-                Button button = new Button("add" + seat);
+                Button button = new Button("add"+" "+ seat);
                 button.setStyle("-fx-background-color: #22a6b3;-fx-text-fill: #ffffff;-fx-font-weight: 700;-fx-min-width: 120px");
                 vBox1.getChildren().addAll(button);
                 button.setOnAction(e -> {
@@ -1061,7 +1062,6 @@ public class TrainStation extends Application {
                 doc.drop();
                 //saving data in document
                 Document document1 = new Document();
-                document1.clear();
                 for (int i = 0; i < x; i++) {
                     if (document[i] != null) {
                         document1.append("data", document[i]);

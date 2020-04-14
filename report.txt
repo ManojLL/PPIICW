@@ -21,3 +21,126 @@ maximum length = 1
 gvgvh ghgh h 37 12
 ------------------------------------------
 ===========================================================================================
+2020-04-14
+QUEUE I
+minimum time = 11
+maximum time = 110
+average time = 13.0
+maximum length = 9
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+mann hbhb 4 11
+bhvgfcgv  nbvfcgv 3 25
+dxcfghbj bhhgcffgh 2 40
+manoj aaaaaaa 10 49
+nsho xfgvb 8 63
+amarabandu hbs 7 73
+kaeid bh 21 84
+ihhihi hbhheac 17 92
+bhb ggh 13 110
+------------------------------------------
+===========================================================================================
+2020-04-14
+QUEUE II
+minimum time = 0
+maximum time = 83
+average time = 10.0
+maximum length = 8
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+ bbhh jhvjhvhj 5 12
+sunil  santha 1 24
+bygyub gyugubb 9 28
+a a 11 38
+hg vgbh jvjjb 6 52
+kajaj gvg 12 63
+sanny leon 19 68
+rusiri gamage 15 83
+------------------------------------------
+===========================================================================================
+2020-04-14
+QUEUE I
+minimum time = 10
+maximum time = 67
+average time = 9.0
+maximum length = 8
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+sunil  santha 1 10
+bhvgfcgv  nbvfcgv 3 20
+ bbhh jhvjhvhj 5 28
+amarabandu hbs 7 33
+bygyub gyugubb 9 43
+a a 11 49
+bhb ggh 13 58
+hvjvh uvubh 41 67
+------------------------------------------
+===========================================================================================
+2020-04-14
+QUEUE II
+minimum time = 5
+maximum time = 73
+average time = 9.0
+maximum length = 8
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+dxcfghbj bhhgcffgh 2 5
+mann hbhb 4 13
+hg vgbh jvjjb 6 26
+nsho xfgvb 8 36
+manoj aaaaaaa 10 45
+kajaj gvg 12 53
+dfghj bhgccygvhj 42 63
+waruna wqs 40 73
+------------------------------------------
+===========================================================================================
+2020-04-14
+QUEUE I
+minimum time = 0
+maximum time = 12
+average time = 12.0
+maximum length = 1
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+bhvgfcgv  nbvfcgv 3 12
+------------------------------------------
+===========================================================================================
+2020-04-14
+QUEUE II
+minimum time = 0
+maximum time = 9
+average time = 9.0
+maximum length = 1
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+dxcfghbj bhhgcffgh 2 9
+------------------------------------------
+===========================================================================================
+2020-04-14
+QUEUE I
+minimum time = 10
+maximum time = 43
+average time = 13.0
+maximum length = 4
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+sunil  santha 1 10
+ bbhh jhvjhvhj 5 23
+hg vgbh jvjjb 6 34
+bygyub gyugubb 9 43
+------------------------------------------
+===========================================================================================
+2020-04-14
+QUEUE II
+minimum time = 15
+maximum time = 42
+average time = 14.0
+maximum length = 4
+---------------------------------------
+***   PASSENGER NAMES & DETAILS   ***
+mann hbhb 4 15
+amarabandu hbs 7 21
+nsho xfgvb 8 30
+manoj aaaaaaa 10 42
+------------------------------------------
+===========================================================================================
