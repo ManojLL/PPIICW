@@ -57,7 +57,7 @@ public class TrainStation extends Application {
     private static int waitRoomCount = 0;
 
     public static void main(String[] args) {
-        launch();
+        Application.launch(args);
     }
 
     @Override
